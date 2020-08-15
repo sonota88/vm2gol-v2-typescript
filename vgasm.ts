@@ -19,18 +19,9 @@ class Operation {
 }
 
 async function readAllLines(path: string): Promise<string[]> {
-  const fr = new FileReader(path);
-  const lines: string[] = [];
-
-  try {
-    await fr.eachLine((line: string) => {
-      lines.push(line.trim());
-    });
-  } finally {
-    fr.close();
-  }
-
-  return lines;
+  const text = await FileReader.readAll(path);
+  return text.split("\n")
+    .map(line => line.trim());
 }
 
 const toOperations = (lines: string[]) => {
@@ -73,6 +64,7 @@ const createLabelAddrMap = (ops: Operation[]) => {
 // --------------------------------
 
 const lines = await readAllLines(Deno.args[0]);
+
 const operations = toOperations(lines);
 
 const labelAddrMap = createLabelAddrMap(operations);
