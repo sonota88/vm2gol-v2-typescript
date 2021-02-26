@@ -392,6 +392,33 @@ function codegenExp(
   return alines;
 }
 
+function _codegenCall_pushFnArg(
+  fnArgNames: string[],
+  lvarNames: string[],
+  fnArg: NodeElem
+): Alines
+{
+  const alines = new Alines();
+
+  if (typeof fnArg === "number") {
+    alines.push(`  push ${fnArg}`);
+  } else if (typeof fnArg === "string") {
+    if (include(fnArgNames, fnArg)) {
+      const fnArgAddr = toFnArgRef(fnArgNames, fnArg);
+      alines.push(`  push ${fnArgAddr}`);
+    } else if (include(lvarNames, fnArg)) {
+      const lvarAddr = toLvarRef(lvarNames, fnArg);
+      alines.push(`  push ${lvarAddr}`);
+    } else {
+      throw notYetImpl("fnArg", fnArg);
+    }
+  } else {
+    throw notYetImpl("fnArg", fnArg);
+  }
+
+  return alines;
+}
+
 function codegenCall(
   fnArgNames: string[],
   lvarNames: string[],
