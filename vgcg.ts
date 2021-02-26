@@ -291,7 +291,7 @@ function _codegenExp(
   }
 }
 
-function _codegenExp_pushLeft(
+function _codegenExp_push(
   fnArgNames: string[],
   lvarNames: string[],
   exp: NodeElem
@@ -299,24 +299,9 @@ function _codegenExp_pushLeft(
 {
   const alines = new Alines();
 
-  const [left, leftAlines] = _codegenExp(fnArgNames, lvarNames, exp);
-  alines.pushAll(leftAlines);
-  alines.push(`  push ${left}`);
-
-  return alines;
-}
-
-function _codegenExp_pushRight(
-  fnArgNames: string[],
-  lvarNames: string[],
-  exp: NodeElem
-): Alines
-{
-  const alines = new Alines();
-
-  const [right, leftAlines] = _codegenExp(fnArgNames, lvarNames, exp);
-  alines.pushAll(leftAlines);
-  alines.push(`  push ${right}`);
+  const [pushArg, _alines] = _codegenExp(fnArgNames, lvarNames, exp);
+  alines.pushAll(_alines);
+  alines.push(`  push ${pushArg}`);
 
   return alines;
 }
@@ -333,11 +318,11 @@ function codegenExp(
   const args = exp.slice(1);
 
   alines.pushAll(
-    _codegenExp_pushLeft(fnArgNames, lvarNames, args[0])
+    _codegenExp_push(fnArgNames, lvarNames, args[0])
   );
   
   alines.pushAll(
-    _codegenExp_pushRight(fnArgNames, lvarNames, args[1])
+    _codegenExp_push(fnArgNames, lvarNames, args[1])
   );
 
   if (operator === "+") {
