@@ -320,6 +320,21 @@ function codegenExp_right(
   }
 }
 
+function _codegenExp_pushLeft(
+  fnArgNames: string[],
+  lvarNames: string[],
+  exp: NodeElem
+): Alines
+{
+  const alines = new Alines();
+
+  const [left, leftAlines] = codegenExp_left(fnArgNames, lvarNames, exp);
+  alines.pushAll(leftAlines);
+  alines.push(`  push ${left}`);
+
+  return alines;
+}
+
 function codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
@@ -331,9 +346,9 @@ function codegenExp(
   const operator = exp[0];
   const args = exp.slice(1);
 
-  const [left, leftAlines] = codegenExp_left(fnArgNames, lvarNames, args[0]);
-  alines.pushAll(leftAlines);
-  alines.push(`  push ${left}`);
+  alines.pushAll(
+    _codegenExp_pushLeft(fnArgNames, lvarNames, args[0])
+  );
   
   const [right, rightAlines] = codegenExp_right(fnArgNames, lvarNames, args[1]);
   alines.pushAll(rightAlines);
