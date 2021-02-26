@@ -652,9 +652,6 @@ function codegenStmts(
     } else if (stmtHead === "set") {
       alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
 
-    } else if (stmtHead === "eq") {
-      throw notYetImpl();
-
     } else if (stmtHead === "return") {
       alines.pushAll(codegenReturn(fnArgNames, lvarNames, stmtRest));
 
