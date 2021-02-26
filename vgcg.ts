@@ -765,21 +765,6 @@ function codegenTopStmts(
     if (stmtHead === "func") {
       alines.pushAll(codegenFunc(stmtRest));
 
-    } else if (stmtHead === "call") {
-      alines.pushAll(codegenCall(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "call_set") {
-      alines.pushAll(codegenCallSet(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "set") {
-      alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "case") {
-      alines.pushAll(codegenCase(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "while") {
-      alines.pushAll(codegenWhile(fnArgNames, lvarNames, stmtRest));
-
     } else if (stmtHead === "_cmt") {
       const cmt = stmtRest[0];
       if (typeof cmt === "string") {
