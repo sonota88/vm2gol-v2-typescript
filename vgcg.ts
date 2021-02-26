@@ -191,7 +191,7 @@ function codegenCase(
 
       const thenAlines = new Alines();
       thenAlines.push(`label when_${labelId}_${whenIndex}`);
-      thenAlines.pushAll(codegenTopStmts(fnArgNames, lvarNames, rest));
+      thenAlines.pushAll(codegenStmts(fnArgNames, lvarNames, rest));
       thenAlines.push(`  jump end_case_${labelId}`);
       thenBodies.push(thenAlines);
     } else {
@@ -251,7 +251,7 @@ function codegenWhile(
   alines.push(`  jump end_while_${labelId}`);
 
   alines.push(`label true_${labelId}`);
-  alines.pushAll(codegenTopStmts(fnArgNames, lvarNames, body.get()));
+  alines.pushAll(codegenStmts(fnArgNames, lvarNames, body.get()));
 
   // ループの先頭に戻る
   alines.push(`  jump while_${labelId}`);
