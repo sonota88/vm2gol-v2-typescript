@@ -30,13 +30,17 @@ test_parser(){
   diff -u test/gol.vgt.json $actual
 }
 
+test_all() {
+  deno test || errs="${errs},deno_test"
+  test_cg || errs="${errs},cg"
+  test_parser || errs="${errs},parser"
+}
+
 # --------------------------------
 
 errs=""
 
-deno test || errs="${errs},deno_test"
-test_cg || errs="${errs},cg"
-test_parser || errs="${errs},parser"
+test_all
 
 if [ "$errs" != "" ]; then
   echo $errs
