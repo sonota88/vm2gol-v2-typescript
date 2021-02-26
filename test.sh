@@ -16,6 +16,9 @@ test_cg(){
   fi
 
   diff -uw test/gol.vga.txt $actual
+  if [ $? -ne 0 ]; then
+    errs="${errs},cg"
+  fi
 }
 
 test_parser(){
@@ -28,12 +31,15 @@ test_parser(){
   fi
 
   diff -u test/gol.vgt.json $actual
+  if [ $? -ne 0 ]; then
+    errs="${errs},parser"
+  fi
 }
 
 test_all() {
   deno test || errs="${errs},deno_test"
-  test_cg || errs="${errs},cg"
-  test_parser || errs="${errs},parser"
+  test_cg
+  test_parser
 }
 
 # --------------------------------
@@ -43,10 +49,10 @@ errs=""
 cmd="$1"; shift
 case $cmd in
   parse | p*)
-    test_parser || errs="${errs},parser"
+    test_parser
     ;;
   codegen | c*)
-    test_cg || errs="${errs},cg"
+    test_cg
     ;;
   all | a*)
     test_all
