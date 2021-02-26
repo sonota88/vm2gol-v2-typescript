@@ -727,60 +727,8 @@ function codegenFunc(rest: NodeElem[]): Alines {
   const lvarNames: string[] = [];
 
   const stmts: NodeElem[] = body.get();
-  for (let stmt of stmts) {
-    if (stmt instanceof NodeList) {
-      ;
-    } else {
-      throw new Error("invalid type");
-    }
-    const stmtHead = stmt.hd();
-    const stmtRest = stmt.tl();
-    
-    if (stmtHead === "call") {
-      alines.pushAll(codegenCall(fnArgNames, lvarNames, stmtRest));
-    } else if (stmtHead === "call_set") {
-      alines.pushAll(codegenCallSet(fnArgNames, lvarNames, stmtRest));
 
-    } else if (stmtHead === "var") {
-      if (typeof stmtRest[0] === "string") {
-        lvarNames.push(stmtRest[0]);
-      } else {
-        throw invalidType(stmtRest[0]);
-      }
-      alines.push(`  sub_sp 1`);
-      if (stmtRest.length == 2) {
-        alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
-      }
-
-    } else if (stmtHead === "set") {
-      alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "eq") {
-      throw notYetImpl();
-
-    } else if (stmtHead === "return") {
-      alines.pushAll(codegenReturn(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "case") {
-      alines.pushAll(codegenCase(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "while") {
-      alines.pushAll(codegenWhile(fnArgNames, lvarNames, stmtRest));
-
-    } else if (stmtHead === "_cmt") {
-      const cmt = stmtRest[0];
-      if (typeof cmt === "string") {
-        // OK
-      } else{
-        throw invalidType(cmt);
-      }
-      alines.pushAll(codegenComment(cmt));
-
-    } else {
-      throw notYetImpl("stmtHead", stmtHead);
-    }
-    ;
-  }
+  alines.pushAll(codegenStmts(fnArgNames, lvarNames, stmts));
 
   alines.push(``);
   alines.push(`  cp bp sp`);
