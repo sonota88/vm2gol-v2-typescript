@@ -262,35 +262,6 @@ function codegenWhile(
   return alines;
 }
 
-function _codegenExp(
-  fnArgNames: string[],
-  lvarNames: string[],
-  arg: NodeElem
-): [string, Alines]
-{
-  const emptyAlines = new Alines();
-
-  if (typeof arg === "number") {
-    return [String(arg), emptyAlines];
-
-  } else if (typeof arg === "string") {
-    if (include(fnArgNames, arg)) {
-      return [toFnArgRef(fnArgNames, arg), emptyAlines];
-    } else if (include(lvarNames, arg)) {
-      return [toLvarRef(lvarNames, arg), emptyAlines];
-    } else {
-      throw notYetImpl(arg);
-    }
-
-  } else if (arg instanceof NodeList) {
-    const alines = codegenExp(fnArgNames, lvarNames, arg.get());
-    return ["reg_a", alines];
-
-  } else {
-    throw notYetImpl(arg);
-  }
-}
-
 function _codegenExp_push(
   fnArgNames: string[],
   lvarNames: string[],
@@ -299,8 +270,31 @@ function _codegenExp_push(
 {
   const alines = new Alines();
 
-  const [pushArg, _alines] = _codegenExp(fnArgNames, lvarNames, exp);
-  alines.pushAll(_alines);
+  const emptyAlines = new Alines();
+  let pushArg;
+
+  if (typeof exp === "number") {
+    pushArg = String(exp);
+
+  } else if (typeof exp === "string") {
+    if (include(fnArgNames, exp)) {
+      pushArg = toFnArgRef(fnArgNames, exp);
+    } else if (include(lvarNames, exp)) {
+      pushArg = toLvarRef(lvarNames, exp);
+    } else {
+      throw notYetImpl(exp);
+    }
+
+  } else if (exp instanceof NodeList) {
+    alines.pushAll(
+      codegenExp(fnArgNames, lvarNames, exp.get())
+    );
+    pushArg = "reg_a";
+
+  } else {
+    throw notYetImpl(exp);
+  }
+
   alines.push(`  push ${pushArg}`);
 
   return alines;
