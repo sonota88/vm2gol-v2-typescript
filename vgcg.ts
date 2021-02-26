@@ -262,36 +262,7 @@ function codegenWhile(
   return alines;
 }
 
-function codegenExp_left(
-  fnArgNames: string[],
-  lvarNames: string[],
-  arg: NodeElem
-): [string, Alines]
-{
-  const emptyAlines = new Alines();
-
-  if (typeof arg === "number") {
-    return [String(arg), emptyAlines];
-
-  } else if (typeof arg === "string") {
-    if (include(fnArgNames, arg)) {
-      return [toFnArgRef(fnArgNames, arg), emptyAlines];
-    } else if (include(lvarNames, arg)) {
-      return [toLvarRef(lvarNames, arg), emptyAlines];
-    } else {
-      throw notYetImpl(arg);
-    }
-
-  } else if (arg instanceof NodeList) {
-    const alines = codegenExp(fnArgNames, lvarNames, arg.get());
-    return ["reg_a", alines];
-
-  } else {
-    throw notYetImpl(arg);
-  }
-}
-
-function codegenExp_right(
+function _codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
   arg: NodeElem
@@ -328,7 +299,7 @@ function _codegenExp_pushLeft(
 {
   const alines = new Alines();
 
-  const [left, leftAlines] = codegenExp_left(fnArgNames, lvarNames, exp);
+  const [left, leftAlines] = _codegenExp(fnArgNames, lvarNames, exp);
   alines.pushAll(leftAlines);
   alines.push(`  push ${left}`);
 
@@ -343,7 +314,7 @@ function _codegenExp_pushRight(
 {
   const alines = new Alines();
 
-  const [right, leftAlines] = codegenExp_right(fnArgNames, lvarNames, exp);
+  const [right, leftAlines] = _codegenExp(fnArgNames, lvarNames, exp);
   alines.pushAll(leftAlines);
   alines.push(`  push ${right}`);
 
