@@ -335,6 +335,21 @@ function _codegenExp_pushLeft(
   return alines;
 }
 
+function _codegenExp_pushRight(
+  fnArgNames: string[],
+  lvarNames: string[],
+  exp: NodeElem
+): Alines
+{
+  const alines = new Alines();
+
+  const [right, leftAlines] = codegenExp_right(fnArgNames, lvarNames, exp);
+  alines.pushAll(leftAlines);
+  alines.push(`  push ${right}`);
+
+  return alines;
+}
+
 function codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
@@ -350,9 +365,9 @@ function codegenExp(
     _codegenExp_pushLeft(fnArgNames, lvarNames, args[0])
   );
   
-  const [right, rightAlines] = codegenExp_right(fnArgNames, lvarNames, args[1]);
-  alines.pushAll(rightAlines);
-  alines.push(`  push ${right}`);
+  alines.pushAll(
+    _codegenExp_pushRight(fnArgNames, lvarNames, args[1])
+  );
 
   if (operator === "+") {
     alines.push(`  pop reg_b`);
