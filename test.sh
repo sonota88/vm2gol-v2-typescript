@@ -40,7 +40,22 @@ test_all() {
 
 errs=""
 
-test_all
+cmd="$1"; shift
+case $cmd in
+  parse | p*)
+    test_parser || errs="${errs},parser"
+    ;;
+  codegen | c*)
+    test_cg || errs="${errs},cg"
+    ;;
+  all | a*)
+    test_all
+    ;;
+  *)
+    echo "invalid command" >&2
+    exit 1
+    ;;
+esac
 
 if [ "$errs" != "" ]; then
   echo $errs
