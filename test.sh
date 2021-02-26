@@ -22,21 +22,6 @@ run_codegen() {
 
 # --------------------------------
 
-test_cg(){
-  local actual=z_test.vga.txt
-
-  run_codegen test/gol.vgt.json $actual
-  local st=$?
-  if [ $st -ne 0 ]; then
-    exit $st
-  fi
-
-  diff -uw test/gol.vga.txt $actual
-  if [ $? -ne 0 ]; then
-    errs="${errs},cg"
-  fi
-}
-
 test_parser(){
   local actual=z_test.vgt.json
 
@@ -49,6 +34,21 @@ test_parser(){
   diff -u test/gol.vgt.json $actual
   if [ $? -ne 0 ]; then
     errs="${errs},parser"
+  fi
+}
+
+test_cg(){
+  local actual=z_test.vga.txt
+
+  run_codegen test/gol.vgt.json $actual
+  local st=$?
+  if [ $st -ne 0 ]; then
+    exit $st
+  fi
+
+  diff -uw test/gol.vga.txt $actual
+  if [ $? -ne 0 ]; then
+    errs="${errs},cg"
   fi
 }
 
