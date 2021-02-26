@@ -431,21 +431,7 @@ function codegenCall(
   const fnArgs = stmtRest.slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
-    if (typeof fnArg === "number") {
-      alines.push(`  push ${fnArg}`);
-    } else if (typeof fnArg === "string") {
-      if (include(fnArgNames, fnArg)) {
-        const fnArgAddr = toFnArgRef(fnArgNames, fnArg);
-        alines.push(`  push ${fnArgAddr}`);
-      } else if (include(lvarNames, fnArg)) {
-        const lvarAddr = toLvarRef(lvarNames, fnArg);
-        alines.push(`  push ${lvarAddr}`);
-      } else {
-        throw notYetImpl("fnArg", fnArg);
-      }
-    } else {
-      throw notYetImpl("fnArg", fnArg);
-    }
+    alines.pushAll(_codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg));
   });
 
   alines.pushAll(codegenComment(`call  ${fnName}`));
@@ -453,27 +439,6 @@ function codegenCall(
   alines.push(`  add_sp ${fnArgs.length}`);
 
   return alines;
-}
-
-function codegenCallSet_valToPush(
-  fnArgNames: string[],
-  lvarNames: string[],
-  fnArg: number | string
-): string
-{
-  if (typeof fnArg === "number") {
-    return String(fnArg);
-  } else if (typeof fnArg === "string") {
-    if (include(fnArgNames, fnArg)) {
-      return toFnArgRef(fnArgNames, fnArg);
-    } else if (include(lvarNames, fnArg)) {
-      return toLvarRef(lvarNames, fnArg);
-    } else {
-      throw notYetImpl(fnArg);
-    }
-  } else {
-    throw notYetImpl(fnArg);
-  }
 }
 
 function codegenCallSet(
@@ -497,17 +462,7 @@ function codegenCallSet(
 
   for (let i=fnArgs.length - 1; i>=0; i--) {
     const fnArg = fnArgs[i];
-    if (
-      typeof fnArg === "string" ||
-        typeof fnArg === "number"
-    ) {
-      // OK
-    } else {
-      throw invalidType(fnArg);
-    }
-
-    const valToPush = codegenCallSet_valToPush(fnArgNames, lvarNames, fnArg);
-    alines.push(`  push ${valToPush}`);
+    alines.pushAll(_codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg));
   }
 
   alines.pushAll(codegenComment(`call_set  ${fnName}`));
