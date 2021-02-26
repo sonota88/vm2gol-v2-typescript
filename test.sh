@@ -5,11 +5,27 @@ set -o errexit
 
 # --------------------------------
 
+run_parser() {
+  local infile="$1"; shift
+  local outfile="$1"; shift
+
+  deno run --allow-read vgparser.ts $infile > $outfile
+}
+
+run_codegen() {
+  local infile="$1"; shift
+  local outfile="$1"; shift
+
+  NO_COLOR= \
+    deno run --allow-read vgcg.ts $infile > $outfile
+}
+
+# --------------------------------
+
 test_cg(){
   local actual=z_test.vga.txt
 
-  NO_COLOR= \
-    deno run --allow-read vgcg.ts test/gol.vgt.json > $actual
+  run_codegen test/gol.vgt.json $actual
   local st=$?
   if [ $st -ne 0 ]; then
     exit $st
@@ -24,7 +40,7 @@ test_cg(){
 test_parser(){
   local actual=z_test.vgt.json
 
-  deno run --allow-read vgparser.ts gol.vg.txt > $actual
+  run_parser gol.vg.txt $actual
   local st=$?
   if [ $st -ne 0 ]; then
     exit $st
