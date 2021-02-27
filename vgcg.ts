@@ -194,7 +194,7 @@ function codegenVar(
 function codegenCase(
   fnArgNames: string[],
   lvarNames: string[],
-  whenBlocks: NodeElem[]
+  whenBlocks: NodeList
 ): Alines
 {
   const alines = new Alines();
@@ -209,7 +209,7 @@ function codegenCase(
   const labelWhenHead = `when_${labelId}`;
   const labelEndWhenHead = `end_when_${labelId}`;
 
-  for (let whenBlock of whenBlocks) {
+  for (let whenBlock of whenBlocks.get()) {
     whenIndex++;
 
     if (whenBlock instanceof NodeList) {
@@ -711,7 +711,7 @@ function codegenStmt(
     alines.pushAll(codegenReturn(fnArgNames, lvarNames, stmtRest));
 
   } else if (stmtHead === "case") {
-    alines.pushAll(codegenCase(fnArgNames, lvarNames, stmtRest));
+    alines.pushAll(codegenCase(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
 
   } else if (stmtHead === "while") {
     alines.pushAll(codegenWhile(fnArgNames, lvarNames, stmtRest));
