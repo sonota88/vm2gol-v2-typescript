@@ -65,6 +65,15 @@ class NodeList {
     return this.els;
   }
 
+  getAsNodeList(i: number): NodeList {
+    const el = this.els[i];
+    if (el instanceof NodeList) {
+      return el;
+    } else {
+      throw invalidType(el);
+    }
+  }
+
   size(): number {
     return this.els.length;
   }
@@ -217,12 +226,7 @@ function codegenCase(
     } else {
       throw invalidType(whenBlock);
     }
-    const cond = whenBlock.hd();
-    if (cond instanceof NodeList) {
-      // OK
-    } else {
-      throw invalidType(cond);
-    }
+    const cond = whenBlock.getAsNodeList(0);
     const rest = whenBlock.tl();
 
     const condHead = cond.hd();
@@ -266,12 +270,7 @@ function codegenWhile(
 {
   const alines = new Alines();
 
-  if (rest[0] instanceof NodeList) {
-    // OK
-  } else {
-    throw invalidType(rest[0]);
-  }
-  const condExpr = rest[0].get();
+  const condExpr = NodeList.fromEls(rest).getAsNodeList(0);
 
   const body = rest[1];
   if (body instanceof NodeList) {
@@ -292,7 +291,7 @@ function codegenWhile(
   // ループの先頭
   alines.push(`label ${labelBegin}`);
 
-  alines.pushAll(codegenExpr(fnArgNames, lvarNames, condExpr));
+  alines.pushAll(codegenExpr(fnArgNames, lvarNames, condExpr.get()));
   alines.push(`  set_reg_b 1`);
   alines.push(`  compare`);
 
@@ -520,12 +519,7 @@ function codegenCallSet(
   const alines = new Alines();
 
   const lvarName = NodeElems_getAsString(stmtRest, 0);
-  const fnTemp = stmtRest[1];
-  if (fnTemp instanceof NodeList) {
-    // OK
-  } else {
-    throw invalidType(fnTemp);
-  }
+  const fnTemp = NodeList.fromEls(stmtRest).getAsNodeList(1);
 
   const fnName = fnTemp.hd();
   const fnArgs = fnTemp.tl();
@@ -557,12 +551,7 @@ function codegenSet_srcVal(
     return [alines, String(rest[1])];
 
   } else if (rest[1] instanceof NodeList) {
-    const expr = rest[1];
-    if (expr instanceof NodeList) {
-      // ok
-    } else {
-      throw invalidType(expr);
-    }
+    const expr = NodeList.fromEls(rest).getAsNodeList(1);
     alines.pushAll(codegenExpr(fnArgNames, lvarNames, expr.els));
 
     return [alines, "reg_a"];
