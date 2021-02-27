@@ -154,6 +154,25 @@ function matchVram(str: string): string {
 
 let globalLabelId = 0;
 
+function codegenVar(
+  fnArgNames: string[],
+  lvarNames: string[],
+  stmtRest: NodeElem[]
+): Alines
+{
+  const alines = new Alines();
+
+  alines.push(`  sub_sp 1`);
+
+  if (stmtRest.length === 2) {
+    alines.pushAll(
+      codegenSet(fnArgNames, lvarNames, stmtRest)
+    );
+  }
+
+  return alines;
+}
+
 function codegenCase(
   fnArgNames: string[],
   lvarNames: string[],
@@ -792,13 +811,11 @@ function codegenFunc(rest: NodeElem[]): Alines {
       }
 
       lvarNames.push(stmtRest[0]);
-      alines.push(`  sub_sp 1`);
 
-      if (stmtRest.length === 2) {
-        alines.pushAll(
-          codegenSet(fnArgNames, lvarNames, stmtRest)
-        );
-      }
+      alines.pushAll(
+        codegenVar(fnArgNames, lvarNames, stmtRest)
+      );
+
     } else {
       alines.pushAll(
         codegenStmt(fnArgNames, lvarNames, stmt)
