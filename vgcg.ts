@@ -60,6 +60,11 @@ class NodeList {
     return this.els.length;
   }
 
+  static fromEls(els: NodeElem[]): NodeList {
+    const nl = new NodeList();
+    nl.els = els;
+    return nl;
+  }
 }
 
 // Assembly lines
