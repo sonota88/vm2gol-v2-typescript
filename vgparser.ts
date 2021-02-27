@@ -163,7 +163,7 @@ class Parser {
 
   // --------------------------------
 
-  _parseArgsFirst() {
+  _parseArg() {
     const t = this.peek();
 
     if (t._type === "ident") {
@@ -178,21 +178,13 @@ class Parser {
     }
   }
 
+  _parseArgsFirst() {
+    return this._parseArg();
+  }
+
   _parseArgsRest() {
     this.consume(",");
-
-    const t = this.peek();
-
-    if (t._type === "ident") {
-      this.pos++;
-      return t.value;
-    } else if (t._type === "int") {
-      this.pos++;
-      return t.value;
-    } else {
-      this.dumpState();
-      throw new Error();
-    }
+    return this._parseArg();
   }
 
   parseArgs(): NodeList {
