@@ -341,19 +341,22 @@ function _codegenExpr_eq(): Alines {
   globalLabelId++;
   const labelId = globalLabelId;
 
+  const labelEnd = `end_eq_${labelId}`;
+  const labelThen = `then_${labelId}`;
+
   alines.push(`  pop reg_b`);
   alines.push(`  pop reg_a`);
 
   alines.push(`  compare`);
-  alines.push(`  jump_eq then_${labelId}`);
+  alines.push(`  jump_eq ${labelThen}`);
 
   alines.push(`  set_reg_a 0`);
-  alines.push(`  jump end_eq_${labelId}`);
+  alines.push(`  jump ${labelEnd}`);
 
-  alines.push(`label then_${labelId}`);
+  alines.push(`label ${labelThen}`);
   alines.push(`  set_reg_a 1`);
 
-  alines.push(`label end_eq_${labelId}`);
+  alines.push(`label ${labelEnd}`);
 
   return alines;
 }
@@ -364,19 +367,22 @@ function _codegenExpr_neq(): Alines {
   globalLabelId++;
   const labelId = globalLabelId;
 
+  const labelEnd = `end_neq_${labelId}`;
+  const labelThen = `then_${labelId}`;
+
   alines.push(`  pop reg_b`);
   alines.push(`  pop reg_a`);
 
   alines.push(`  compare`);
-  alines.push(`  jump_eq then_${labelId}`);
+  alines.push(`  jump_eq ${labelThen}`);
 
   alines.push(`  set_reg_a 1`);
-  alines.push(`  jump end_neq_${labelId}`);
+  alines.push(`  jump ${labelEnd}`);
 
-  alines.push(`label then_${labelId}`);
+  alines.push(`label ${labelThen}`);
   alines.push(`  set_reg_a 0`);
 
-  alines.push(`label end_neq_${labelId}`);
+  alines.push(`label ${labelEnd}`);
 
   return alines;
 }
