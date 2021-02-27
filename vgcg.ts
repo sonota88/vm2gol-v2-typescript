@@ -243,28 +243,32 @@ function codegenWhile(
   globalLabelId++;
   const labelId = globalLabelId;
 
+  const labelBegin = `while_${labelId}`;
+  const labelEnd = `end_while_${labelId}`;
+  const labelTrue = `true_${labelId}`;
+
   alines.push("");
 
   // ループの先頭
-  alines.push(`label while_${labelId}`);
+  alines.push(`label ${labelBegin}`);
 
   alines.pushAll(codegenExpr(fnArgNames, lvarNames, condExpr));
   alines.push(`  set_reg_b 1`);
   alines.push(`  compare`);
 
   // true の場合ループの本体を実行
-  alines.push(`  jump_eq true_${labelId}`);
+  alines.push(`  jump_eq ${labelTrue}`);
 
   // false の場合ループを抜ける
-  alines.push(`  jump end_while_${labelId}`);
+  alines.push(`  jump ${labelEnd}`);
 
-  alines.push(`label true_${labelId}`);
+  alines.push(`label ${labelTrue}`);
   alines.pushAll(codegenStmts(fnArgNames, lvarNames, body.get()));
 
   // ループの先頭に戻る
-  alines.push(`  jump while_${labelId}`);
+  alines.push(`  jump ${labelBegin}`);
 
-  alines.push(`label end_while_${labelId}`);
+  alines.push(`label ${labelEnd}`);
   alines.push("");
 
   return alines;
