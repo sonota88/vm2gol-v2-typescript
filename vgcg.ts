@@ -32,11 +32,11 @@ class NodeList {
     this.els.push(el);
   }
 
-  hd() {
+  hd(): NodeElem {
     return this.els[0];
   }
 
-  tl() {
+  tl(): NodeElem[] {
     return this.els.slice(1);
   }
 
