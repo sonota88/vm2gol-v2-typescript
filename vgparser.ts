@@ -150,7 +150,6 @@ class Parser {
     const t = this.tokens[pos];
 
     if (t.value !== exp) {
-      this.dumpState();
       const msg = `Assertion failed: expected (${ Deno.inspect(exp) }) actual (${ Deno.inspect(t) })`
       throw new Error(msg);
     }
@@ -173,7 +172,6 @@ class Parser {
       this.pos++;
       return t.value;
     } else {
-      this.dumpState();
       throw new Error();
     }
   }
@@ -275,7 +273,6 @@ class Parser {
     } else if (t.value === "=") {
       return this.parseVarInit();
     } else {
-      this.dumpState();
       throw new Error();
     }
   }
@@ -331,7 +328,6 @@ class Parser {
       return nl;
 
     default:
-      this.dumpState();
       throw new Error();
     }
   }
@@ -356,7 +352,6 @@ class Parser {
       const exprL = tLeft.value;
       return this.parseExprRight(exprL);
     } else {
-      this.dumpState();
       throw new Error();
     }
   }
@@ -564,7 +559,6 @@ class Parser {
     case "case": return this.parseCase();
     case "_cmt": return this.parseVmComment();
     default:
-      this.dumpState();
       throw new Error();
     }
   }
@@ -610,6 +604,14 @@ const src = await FileReader.readAll(Deno.args[0]);
 const tokens = tokenize(src);
 
 const parser = new Parser(tokens);
-const tree = parser.parse();
+
+let tree;
+
+try {
+  tree = parser.parse();
+} catch(e) {
+  parser.dumpState();
+  throw e;
+}
 
 console.log(JSON.stringify(tree.toPlain(), null, "  "));
