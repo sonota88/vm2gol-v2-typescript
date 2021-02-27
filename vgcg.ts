@@ -142,6 +142,14 @@ function toLvarRef(
   return `[bp-${index + 1}]`;
 }
 
+function matchVram(str: string): string {
+  if (str.match(/^vram\[(.+)\]$/)) {
+    return RegExp.$1;
+  } else {
+    return "";
+  }
+}
+
 // --------------------------------
 
 let globalLabelId = 0;
@@ -516,8 +524,8 @@ function codegenSet_srcVal(
       const lvarRef = toLvarRef(lvarNames, rest[1]);
       return [alines, lvarRef];
 
-    } else if (rest[1].match(/^vram\[(.+)\]$/)) {
-      const vramParam = RegExp.$1;
+    } else if (matchVram(rest[1]) !== "") {
+      const vramParam = matchVram(rest[1]);
 
       if (vramParam.match(/^\d+$/)) {
         throw notYetImpl();
@@ -562,8 +570,8 @@ function codegenSet(
   alines.pushAll(_alines);
   let srcVal = _srcVal;
 
-  if (dest.match(/^vram\[(.+)\]$/)) {
-    const vramParam = RegExp.$1;
+  if (matchVram(dest) !== "") {
+    const vramParam = matchVram(dest);
 
     if (vramParam.match(/^\d+$/)) {
       throw notYetImpl();
@@ -596,8 +604,8 @@ function codegenReturn(
     throw notYetImpl(retval);
   } else if (typeof retval === "string") {
 
-    if (retval.match(/^vram\[(.+)\]$/)) {
-      const vramParam = RegExp.$1;
+    if (matchVram(retval) !== "") {
+      const vramParam = matchVram(retval);
 
       if (vramParam.match(/^\d+$/)) {
         throw notYetImpl(retval);
