@@ -168,6 +168,9 @@ function codegenCase(
   let whenIndex = -1;
   const thenBodies: Alines[] = [];
 
+  const labelEnd = `end_case_${labelId}`;
+  const labelWhenHead = `when_${labelId}`;
+
   for (let whenBlock of whenBlocks) {
     whenIndex++;
 
@@ -195,25 +198,25 @@ function codegenCase(
       alines.push(`  set_reg_b 1`);
 
       alines.push(`  compare`);
-      alines.push(`  jump_eq when_${labelId}_${whenIndex}`);
+      alines.push(`  jump_eq ${labelWhenHead}_${whenIndex}`);
 
       const thenAlines = new Alines();
-      thenAlines.push(`label when_${labelId}_${whenIndex}`);
+      thenAlines.push(`label ${labelWhenHead}_${whenIndex}`);
       thenAlines.pushAll(codegenStmts(fnArgNames, lvarNames, rest));
-      thenAlines.push(`  jump end_case_${labelId}`);
+      thenAlines.push(`  jump ${labelEnd}`);
       thenBodies.push(thenAlines);
     } else {
       throw notYetImpl();
     }
   }
 
-  alines.push(`  jump end_case_${labelId}`);
+  alines.push(`  jump ${labelEnd}`);
 
   for (let thenBody of thenBodies) {
     alines.pushAll(thenBody);
   }
 
-  alines.push(`label end_case_${labelId}`);
+  alines.push(`label ${labelEnd}`);
 
   return alines;
 }
