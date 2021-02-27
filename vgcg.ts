@@ -166,16 +166,16 @@ let globalLabelId = 0;
 function codegenVar(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeElem[]
+  stmtRest: NodeList
 ): Alines
 {
   const alines = new Alines();
 
   alines.push(`  sub_sp 1`);
 
-  if (stmtRest.length === 2) {
+  if (stmtRest.size() === 2) {
     alines.pushAll(
-      codegenSet(fnArgNames, lvarNames, stmtRest)
+      codegenSet(fnArgNames, lvarNames, stmtRest.get())
     );
   }
 
@@ -826,7 +826,7 @@ function codegenFunc(rest: NodeElem[]): Alines {
       lvarNames.push(stmtRest[0]);
 
       alines.pushAll(
-        codegenVar(fnArgNames, lvarNames, stmtRest)
+        codegenVar(fnArgNames, lvarNames, NodeList.fromEls(stmtRest))
       );
 
     } else {
