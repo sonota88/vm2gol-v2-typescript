@@ -448,21 +448,25 @@ function _codegenCall_pushFnArg(
 {
   const alines = new Alines();
 
+  let pushArg: number | string;
+
   if (typeof fnArg === "number") {
-    alines.push(`  push ${fnArg}`);
+    pushArg = fnArg;
   } else if (typeof fnArg === "string") {
     if (include(fnArgNames, fnArg)) {
       const fnArgAddr = toFnArgRef(fnArgNames, fnArg);
-      alines.push(`  push ${fnArgAddr}`);
+      pushArg = fnArgAddr;
     } else if (include(lvarNames, fnArg)) {
       const lvarAddr = toLvarRef(lvarNames, fnArg);
-      alines.push(`  push ${lvarAddr}`);
+      pushArg = lvarAddr;
     } else {
       throw notYetImpl("fnArg", fnArg);
     }
   } else {
     throw notYetImpl("fnArg", fnArg);
   }
+
+  alines.push(`  push ${pushArg}`);
 
   return alines;
 }
