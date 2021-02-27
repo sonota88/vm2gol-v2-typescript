@@ -17,7 +17,7 @@ const puts_e = (...args: any[]) => {
 
 // --------------------------------
 
-type TokenType = "reserved" | "int" | "symbol" | "ident" | "string";
+type TokenType = "kw" | "int" | "symbol" | "ident" | "str";
 type TokenValue = string | number;
 
 class Token {
@@ -47,12 +47,12 @@ function tokenize(src: string) {
 
     } else if (rest.match(/^"(.*?)"/)) {
       const str = RegExp.$1;
-      tokens.push(new Token("string", str));
+      tokens.push(new Token("str", str));
       pos += str.length + 2;
 
     } else if (rest.match(/^(func)[^a-z_]/)) {
       const str = RegExp.$1;
-      tokens.push(new Token("reserved", str));
+      tokens.push(new Token("kw", str));
       pos += str.length;
 
     } else if (rest.match(/^(-?[0-9]+)/)) {
