@@ -800,11 +800,9 @@ function codegenFunc(rest: NodeElem[]): Alines {
         );
       }
     } else {
-
-    alines.pushAll(
-      codegenStmt(fnArgNames, lvarNames, stmt)
-    );
-
+      alines.pushAll(
+        codegenStmt(fnArgNames, lvarNames, stmt)
+      );
     }
   }
 
