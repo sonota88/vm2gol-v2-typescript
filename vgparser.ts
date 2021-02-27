@@ -466,6 +466,22 @@ class Parser {
     }
   }
 
+  _parseWhenClause(): NodeList {
+    this.consume("(");
+    const expr = this.parseExpr();
+    this.consume(")");
+
+    this.consume("{");
+    const stmts = this.parseStmts();
+    this.consume("}");
+
+    const nl = new NodeList();
+    nl.push(expr);
+    nl.pushAll(stmts.els);
+
+    return nl;
+  }
+
   parseCase(): NodeList {
     this.consume("case");
 
@@ -479,19 +495,7 @@ class Parser {
         break;
       }
 
-      this.consume("(");
-      const expr = this.parseExpr();
-      this.consume(")");
-
-      this.consume("{");
-      const stmts = this.parseStmts();
-      this.consume("}");
-
-      const nl = new NodeList();
-      nl.push(expr);
-      nl.pushAll(stmts.els);
-      
-      whenClauses.push(nl);
+      whenClauses.push(this._parseWhenClause());
     }
 
 
