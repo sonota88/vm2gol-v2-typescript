@@ -778,7 +778,17 @@ function codegenFunc(rest: NodeElem[]): Alines {
 
   const stmts: NodeElem[] = body.get();
 
-  alines.pushAll(codegenStmts(fnArgNames, lvarNames, stmts));
+  for (let stmt of stmts) {
+    if (stmt instanceof NodeList) {
+      ;
+    } else {
+      throw new Error("invalid type");
+    }
+
+    alines.pushAll(
+      codegenStmt(fnArgNames, lvarNames, stmt)
+    );
+  }
 
   alines.push(``);
   alines.push(`  cp bp sp`);
