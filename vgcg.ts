@@ -207,6 +207,7 @@ function codegenCase(
 
   const labelEnd = `end_case_${labelId}`;
   const labelWhenHead = `when_${labelId}`;
+  const labelEndWhenHead = `end_when_${labelId}`;
 
   for (let whenBlock of whenBlocks) {
     whenIndex++;
@@ -236,21 +237,20 @@ function codegenCase(
 
       alines.push(`  compare`);
       alines.push(`  jump_eq ${labelWhenHead}_${whenIndex}`);
+      alines.push(`  jump ${labelEndWhenHead}_${whenIndex}`);
 
-      const thenAlines = new Alines();
-      thenAlines.push(`label ${labelWhenHead}_${whenIndex}`);
-      thenAlines.pushAll(codegenStmts(fnArgNames, lvarNames, rest));
-      thenAlines.push(`  jump ${labelEnd}`);
-      thenBodies.push(thenAlines);
+      // 真の場合ここにジャンプ
+      alines.push(`label ${labelWhenHead}_${whenIndex}`);
+
+      alines.pushAll(codegenStmts(fnArgNames, lvarNames, rest));
+
+      alines.push(`  jump ${labelEnd}`);
+
+      // 偽の場合ここにジャンプ
+      alines.push(`label ${labelEndWhenHead}_${whenIndex}`);
     } else {
       throw notYetImpl();
     }
-  }
-
-  alines.push(`  jump ${labelEnd}`);
-
-  for (let thenBody of thenBodies) {
-    alines.pushAll(thenBody);
   }
 
   alines.push(`label ${labelEnd}`);
