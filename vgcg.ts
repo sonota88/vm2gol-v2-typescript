@@ -21,6 +21,15 @@ type NodeElem = string | number | NodeList;
 type PlainElem = string | number | PlainArray;
 type PlainArray = PlainElem[];
 
+function NodeElems_getAsString(els: NodeElem[], i: number): string {
+  const el = els[i];
+  if (typeof el === "string") {
+    return el;
+  } else {
+    throw invalidType(el);
+  }
+}
+
 class NodeList {
   els: NodeElem[];
 
@@ -510,7 +519,7 @@ function codegenCallSet(
 {
   const alines = new Alines();
 
-  const lvarName = stmtRest[0];
+  const lvarName = NodeElems_getAsString(stmtRest, 0);
   const fnTemp = stmtRest[1];
   if (fnTemp instanceof NodeList) {
     // OK
@@ -530,9 +539,6 @@ function codegenCallSet(
   alines.push(`  call ${fnName}`);
   alines.push(`  add_sp ${fnArgs.length}`);
 
-  if (typeof lvarName !== "string") {
-    throw invalidType(lvarName);
-  }
   const lvarRef = toLvarRef(lvarNames, lvarName);
   alines.push(`  cp reg_a ${lvarRef}`);
 
@@ -605,12 +611,7 @@ function codegenSet(
 {
   const alines = new Alines();
 
-  let dest: string;
-  if (typeof rest[0] === "string") {
-    dest = rest[0];
-  } else {
-    throw invalidType(rest[0]);
-  }
+  let dest = NodeElems_getAsString(rest, 0);
 
   const [_alines, _srcVal] = codegenSet_srcVal(fnArgNames, lvarNames, rest);
   alines.pushAll(_alines);
@@ -716,12 +717,7 @@ function codegenStmt(
     alines.pushAll(codegenWhile(fnArgNames, lvarNames, stmtRest));
 
   } else if (stmtHead === "_cmt") {
-    const cmt = stmtRest[0];
-    if (typeof cmt === "string") {
-      // OK
-    } else{
-      throw invalidType(cmt);
-    }
+    const cmt = NodeElems_getAsString(stmtRest, 0);
     alines.pushAll(codegenVmComment(cmt));
 
   } else {
@@ -817,13 +813,8 @@ function codegenFunc(rest: NodeElem[]): Alines {
     if (stmtHead === "var") {
       const stmtRest: NodeElem[] = stmt.tl();
 
-      if (typeof stmtRest[0] === "string") {
-        ;
-      } else {
-        throw invalidType(stmtRest[0]);
-      }
-
-      lvarNames.push(stmtRest[0]);
+      const lvarName = NodeElems_getAsString(stmtRest, 0);
+      lvarNames.push(lvarName);
 
       alines.pushAll(
         codegenVar(fnArgNames, lvarNames, NodeList.fromEls(stmtRest))
@@ -872,12 +863,7 @@ function codegenTopStmts(
       alines.pushAll(codegenFunc(stmtRest));
 
     } else if (stmtHead === "_cmt") {
-      const cmt = stmtRest[0];
-      if (typeof cmt === "string") {
-        // OK
-      } else {
-        throw invalidType(stmtRest);
-      }
+      const cmt = NodeElems_getAsString(stmtRest, 0);
 
       alines.pushAll(codegenVmComment(cmt));
 
