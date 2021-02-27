@@ -56,6 +56,10 @@ class NodeList {
     return this.els;
   }
 
+  size(): number {
+    return this.els.length;
+  }
+
 }
 
 // Assembly lines
