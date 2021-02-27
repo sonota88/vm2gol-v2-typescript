@@ -560,7 +560,8 @@ function codegenSet_srcVal(
     }
 
   } else {
-    throw invalidType(rest[1]);
+    // throw invalidType(rest[1]);
+    throw invalidType(rest);
   }
 }
 
@@ -670,17 +671,6 @@ function codegenStmt(
   } else if (stmtHead === "call_set") {
     alines.pushAll(codegenCallSet(fnArgNames, lvarNames, stmtRest));
 
-  } else if (stmtHead === "var") {
-    if (typeof stmtRest[0] === "string") {
-      lvarNames.push(stmtRest[0]);
-    } else {
-      throw invalidType(stmtRest[0]);
-    }
-    alines.push(`  sub_sp 1`);
-    if (stmtRest.length == 2) {
-      alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
-    }
-
   } else if (stmtHead === "set") {
     alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
 
@@ -785,9 +775,37 @@ function codegenFunc(rest: NodeElem[]): Alines {
       throw new Error("invalid type");
     }
 
+    const stmtHead = stmt.hd();
+    if (typeof stmtHead === "string") {
+      ;
+    } else {
+      throw invalidType(stmt.hd());
+    }
+
+    if (stmtHead === "var") {
+      const stmtRest: NodeElem[] = stmt.tl();
+
+      if (typeof stmtRest[0] === "string") {
+        ;
+      } else {
+        throw invalidType(stmtRest[0]);
+      }
+
+      lvarNames.push(stmtRest[0]);
+      alines.push(`  sub_sp 1`);
+
+      if (stmtRest.length === 2) {
+        alines.pushAll(
+          codegenSet(fnArgNames, lvarNames, stmtRest)
+        );
+      }
+    } else {
+
     alines.pushAll(
       codegenStmt(fnArgNames, lvarNames, stmt)
     );
+
+    }
   }
 
   alines.push(``);
