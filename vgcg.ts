@@ -450,7 +450,7 @@ function codegenCall(
     alines.pushAll(_codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg));
   });
 
-  alines.pushAll(codegenComment(`call  ${fnName}`));
+  alines.pushAll(codegenVmComment(`call  ${fnName}`));
   alines.push(`  call ${fnName}`);
   alines.push(`  add_sp ${fnArgs.length}`);
 
@@ -481,7 +481,7 @@ function codegenCallSet(
     alines.pushAll(_codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg));
   }
 
-  alines.pushAll(codegenComment(`call_set  ${fnName}`));
+  alines.pushAll(codegenVmComment(`call_set  ${fnName}`));
   alines.push(`  call ${fnName}`);
   alines.push(`  add_sp ${fnArgs.length}`);
 
@@ -633,7 +633,7 @@ function codegenReturn(
   return alines;
 }
 
-function codegenComment(comment: string): Alines {
+function codegenVmComment(comment: string): Alines {
   const alines = new Alines();
 
   alines.push(`  _cmt ` + comment.replace(new RegExp(" ", "g"), "~"));
@@ -693,7 +693,7 @@ function codegenStmts(
       } else{
         throw invalidType(cmt);
       }
-      alines.pushAll(codegenComment(cmt));
+      alines.pushAll(codegenVmComment(cmt));
 
     } else {
       throw notYetImpl("stmtHead", stmtHead);
@@ -795,7 +795,7 @@ function codegenTopStmts(
         throw invalidType(stmtRest);
       }
 
-      alines.pushAll(codegenComment(cmt));
+      alines.pushAll(codegenVmComment(cmt));
 
     } else {
       throw notYetImpl("stmtHead", stmtHead);
