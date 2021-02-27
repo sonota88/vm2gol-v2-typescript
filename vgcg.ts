@@ -310,6 +310,16 @@ function _codegenExp_add(): Alines {
   return alines;
 }
 
+function _codegenExp_mult(): Alines {
+  const alines = new Alines();
+
+  alines.push(`  pop reg_b`);
+  alines.push(`  pop reg_a`);
+  alines.push(`  mult_ab`);
+
+  return alines;
+}
+
 function codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
@@ -333,9 +343,7 @@ function codegenExp(
     alines.pushAll(_codegenExp_add());
 
   } else if (operator === "*") {
-    alines.push(`  pop reg_b`);
-    alines.push(`  pop reg_a`);
-    alines.push(`  mult_ab`);
+    alines.pushAll(_codegenExp_mult());
 
   } else if (operator === "eq") {
     globalLabelId++;
