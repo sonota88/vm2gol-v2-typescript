@@ -300,6 +300,16 @@ function _codegenExp_push(
   return alines;
 }
 
+function _codegenExp_add(): Alines {
+  const alines = new Alines();
+
+  alines.push(`  pop reg_b`);
+  alines.push(`  pop reg_a`);
+  alines.push(`  add_ab`);
+
+  return alines;
+}
+
 function codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
@@ -320,9 +330,7 @@ function codegenExp(
   );
 
   if (operator === "+") {
-    alines.push(`  pop reg_b`);
-    alines.push(`  pop reg_a`);
-    alines.push(`  add_ab`);
+    alines.pushAll(_codegenExp_add());
 
   } else if (operator === "*") {
     alines.push(`  pop reg_b`);
