@@ -163,29 +163,49 @@ class Parser {
 
   // --------------------------------
 
+  _parseArgsFirst() {
+    const t = this.peek();
+
+    if (t._type === "ident") {
+      this.pos++;
+      return t.value;
+    } else if (t._type === "int") {
+      this.pos++;
+      return t.value;
+    } else {
+      this.dumpState();
+      throw new Error();
+    }
+  }
+
+  _parseArgsRest() {
+    this.consume(",");
+
+    const t = this.peek();
+
+    if (t._type === "ident") {
+      this.pos++;
+      return t.value;
+    } else if (t._type === "int") {
+      this.pos++;
+      return t.value;
+    } else {
+      this.dumpState();
+      throw new Error();
+    }
+  }
+
   parseArgs(): NodeList {
     const args = new NodeList();
 
-    while (true) {
-      const t = this.peek();
-      if (t.value === ")") {
-        break;
-      }
+    if (this.peek().value === ")") {
+      return args;
+    }
 
-      if (t._type === "ident") {
-        this.pos++;
-        const name = t.value;
-        args.push(name);
-      } else if (t._type === "int") {
-        this.pos++;
-        const val = t.value;
-        args.push(val);
-      } else if (t.value === ",") {
-        this.pos++;
-      } else {
-        this.dumpState();
-        throw new Error();
-      }
+    args.push(this._parseArgsFirst());
+
+    while (this.peek().value === ",") {
+      args.push(this._parseArgsRest());
     }
 
     return args;
