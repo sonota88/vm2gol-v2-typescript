@@ -387,16 +387,12 @@ function codegenExp(
 
   if (operator === "+") {
     alines.pushAll(_codegenExp_add());
-
   } else if (operator === "*") {
     alines.pushAll(_codegenExp_mult());
-
   } else if (operator === "eq") {
     alines.pushAll(_codegenExp_eq());
-
   } else if (operator === "neq") {
     alines.pushAll(_codegenExp_neq());
-
   } else {
     throw notYetImpl(operator);
   }
