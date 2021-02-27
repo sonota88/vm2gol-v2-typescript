@@ -56,11 +56,11 @@ test_all() {
   echo "==== deno test ===="
   deno test || errs="${errs},deno_test"
 
-  echo "==== codegen ===="
-  test_cg
-
   echo "==== parser ===="
   test_parser
+
+  echo "==== codegen ===="
+  test_cg
 }
 
 # --------------------------------
