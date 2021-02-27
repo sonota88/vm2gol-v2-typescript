@@ -516,19 +516,23 @@ function codegenSet_srcVal(
       const lvarRef = toLvarRef(lvarNames, rest[1]);
       return [alines, lvarRef];
 
-    } else if (rest[1].match(/^vram\[(\d+)\]$/)) {
-      throw notYetImpl();
-    } else if (rest[1].match(/^vram\[([a-z_][a-z0-9_]*)\]$/)) {
-      const varName = RegExp.$1;
+    } else if (rest[1].match(/^vram\[(.+)\]$/)) {
+      const vramParam = RegExp.$1;
 
-      if (include(lvarNames, varName)) {
-        const lvarRef = toLvarRef(lvarNames, varName);
+    if (vramParam.match(/^\d+$/)) {
+      throw notYetImpl();
+    } else {
+      const vramParam = RegExp.$1;
+
+      if (include(lvarNames, vramParam)) {
+        const lvarRef = toLvarRef(lvarNames, vramParam);
         alines.push(`  get_vram ${lvarRef} reg_a`);
       } else {
         throw notYetImpl();
       }
 
       return [alines, "reg_a"];
+    }
 
     } else {
       throw notYetImpl();
@@ -592,14 +596,19 @@ function codegenReturn(
     throw notYetImpl(retval);
   } else if (typeof retval === "string") {
 
-    if (retval.match(/^vram\[([a-z0-9_]+)\]$/)) {
-      const varName = RegExp.$1;
-      if (include(lvarNames, varName)) {
-        const lvarRef = toLvarRef(lvarNames, varName);
+    if (retval.match(/^vram\[(.+)\]$/)) {
+      const vramParam = RegExp.$1;
+
+    if (vramParam.match(/^\d+$/)) {
+      throw notYetImpl(retval);
+    } else {
+      if (include(lvarNames, vramParam)) {
+        const lvarRef = toLvarRef(lvarNames, vramParam);
         alines.push(`  get_vram ${lvarRef} reg_a`);
       } else {
         throw notYetImpl(retval);
       }
+    }
 
     } else if (include(lvarNames, retval)) {
       const lvarRef = toLvarRef(lvarNames, retval);
