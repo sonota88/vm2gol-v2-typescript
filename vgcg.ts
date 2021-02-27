@@ -320,6 +320,29 @@ function _codegenExp_mult(): Alines {
   return alines;
 }
 
+function _codegenExp_eq(): Alines {
+  const alines = new Alines();
+
+  globalLabelId++;
+  const labelId = globalLabelId;
+
+  alines.push(`  pop reg_b`);
+  alines.push(`  pop reg_a`);
+
+  alines.push(`  compare`);
+  alines.push(`  jump_eq then_${labelId}`);
+
+  alines.push(`  set_reg_a 0`);
+  alines.push(`  jump end_eq_${labelId}`);
+
+  alines.push(`label then_${labelId}`);
+  alines.push(`  set_reg_a 1`);
+
+  alines.push(`label end_eq_${labelId}`);
+
+  return alines;
+}
+
 function codegenExp(
   fnArgNames: string[],
   lvarNames: string[],
@@ -346,22 +369,7 @@ function codegenExp(
     alines.pushAll(_codegenExp_mult());
 
   } else if (operator === "eq") {
-    globalLabelId++;
-    const labelId = globalLabelId;
-
-    alines.push(`  pop reg_b`);
-    alines.push(`  pop reg_a`);
-
-    alines.push(`  compare`);
-    alines.push(`  jump_eq then_${labelId}`);
-
-    alines.push(`  set_reg_a 0`);
-    alines.push(`  jump end_eq_${labelId}`);
-
-    alines.push(`label then_${labelId}`);
-    alines.push(`  set_reg_a 1`);
-
-    alines.push(`label end_eq_${labelId}`);
+    alines.pushAll(_codegenExp_eq());
 
   } else if (operator === "neq") {
     globalLabelId++;
