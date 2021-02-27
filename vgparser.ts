@@ -498,7 +498,6 @@ class Parser {
       whenClauses.push(this._parseWhenClause());
     }
 
-
     this.consume("}");
 
     const nl = new NodeList();
