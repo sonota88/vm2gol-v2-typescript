@@ -190,7 +190,7 @@ function codegenCase(
     alines.push(`  # 条件 ${labelId}_${whenIndex}: ${Deno.inspect(cond.toPlain())}`);
 
     if (condHead === "eq") {
-      alines.pushAll(codegenExp(fnArgNames, lvarNames, cond.get()));
+      alines.pushAll(codegenExpr(fnArgNames, lvarNames, cond.get()));
 
       alines.push(`  set_reg_b 1`);
 
@@ -231,7 +231,7 @@ function codegenWhile(
   } else {
     throw invalidType(rest[0]);
   }
-  const condExp = rest[0].get();
+  const condExpr = rest[0].get();
 
   const body = rest[1];
   if (body instanceof NodeList) {
@@ -248,7 +248,7 @@ function codegenWhile(
   // ループの先頭
   alines.push(`label while_${labelId}`);
 
-  alines.pushAll(codegenExp(fnArgNames, lvarNames, condExp));
+  alines.pushAll(codegenExpr(fnArgNames, lvarNames, condExpr));
   alines.push(`  set_reg_b 1`);
   alines.push(`  compare`);
 
@@ -270,10 +270,10 @@ function codegenWhile(
   return alines;
 }
 
-function _codegenExp_push(
+function _codegenExpr_push(
   fnArgNames: string[],
   lvarNames: string[],
-  exp: NodeElem
+  expr: NodeElem
 ): Alines
 {
   const alines = new Alines();
@@ -281,26 +281,26 @@ function _codegenExp_push(
   const emptyAlines = new Alines();
   let pushArg;
 
-  if (typeof exp === "number") {
-    pushArg = String(exp);
+  if (typeof expr === "number") {
+    pushArg = String(expr);
 
-  } else if (typeof exp === "string") {
-    if (include(fnArgNames, exp)) {
-      pushArg = toFnArgRef(fnArgNames, exp);
-    } else if (include(lvarNames, exp)) {
-      pushArg = toLvarRef(lvarNames, exp);
+  } else if (typeof expr === "string") {
+    if (include(fnArgNames, expr)) {
+      pushArg = toFnArgRef(fnArgNames, expr);
+    } else if (include(lvarNames, expr)) {
+      pushArg = toLvarRef(lvarNames, expr);
     } else {
-      throw notYetImpl(exp);
+      throw notYetImpl(expr);
     }
 
-  } else if (exp instanceof NodeList) {
+  } else if (expr instanceof NodeList) {
     alines.pushAll(
-      codegenExp(fnArgNames, lvarNames, exp.get())
+      codegenExpr(fnArgNames, lvarNames, expr.get())
     );
     pushArg = "reg_a";
 
   } else {
-    throw notYetImpl(exp);
+    throw notYetImpl(expr);
   }
 
   alines.push(`  push ${pushArg}`);
@@ -308,7 +308,7 @@ function _codegenExp_push(
   return alines;
 }
 
-function _codegenExp_add(): Alines {
+function _codegenExpr_add(): Alines {
   const alines = new Alines();
 
   alines.push(`  pop reg_b`);
@@ -318,7 +318,7 @@ function _codegenExp_add(): Alines {
   return alines;
 }
 
-function _codegenExp_mult(): Alines {
+function _codegenExpr_mult(): Alines {
   const alines = new Alines();
 
   alines.push(`  pop reg_b`);
@@ -328,7 +328,7 @@ function _codegenExp_mult(): Alines {
   return alines;
 }
 
-function _codegenExp_eq(): Alines {
+function _codegenExpr_eq(): Alines {
   const alines = new Alines();
 
   globalLabelId++;
@@ -351,7 +351,7 @@ function _codegenExp_eq(): Alines {
   return alines;
 }
 
-function _codegenExp_neq(): Alines {
+function _codegenExpr_neq(): Alines {
   const alines = new Alines();
 
   globalLabelId++;
@@ -374,33 +374,33 @@ function _codegenExp_neq(): Alines {
   return alines;
 }
 
-function codegenExp(
+function codegenExpr(
   fnArgNames: string[],
   lvarNames: string[],
-  exp: NodeElem[]
+  expr: NodeElem[]
 ): Alines
 {
   const alines = new Alines();
 
-  const operator = exp[0];
-  const args = exp.slice(1);
+  const operator = expr[0];
+  const args = expr.slice(1);
 
   alines.pushAll(
-    _codegenExp_push(fnArgNames, lvarNames, args[0])
+    _codegenExpr_push(fnArgNames, lvarNames, args[0])
   );
   
   alines.pushAll(
-    _codegenExp_push(fnArgNames, lvarNames, args[1])
+    _codegenExpr_push(fnArgNames, lvarNames, args[1])
   );
 
   if (operator === "+") {
-    alines.pushAll(_codegenExp_add());
+    alines.pushAll(_codegenExpr_add());
   } else if (operator === "*") {
-    alines.pushAll(_codegenExp_mult());
+    alines.pushAll(_codegenExpr_mult());
   } else if (operator === "eq") {
-    alines.pushAll(_codegenExp_eq());
+    alines.pushAll(_codegenExpr_eq());
   } else if (operator === "neq") {
-    alines.pushAll(_codegenExp_neq());
+    alines.pushAll(_codegenExpr_neq());
   } else {
     throw notYetImpl(operator);
   }
@@ -506,13 +506,13 @@ function codegenSet_srcVal(
     return [alines, String(rest[1])];
 
   } else if (rest[1] instanceof NodeList) {
-    const exp = rest[1];
-    if (exp instanceof NodeList) {
+    const expr = rest[1];
+    if (expr instanceof NodeList) {
       // ok
     } else {
-      throw invalidType(exp);
+      throw invalidType(expr);
     }
-    alines.pushAll(codegenExp(fnArgNames, lvarNames, exp.els));
+    alines.pushAll(codegenExpr(fnArgNames, lvarNames, expr.els));
 
     return [alines, "reg_a"];
 
