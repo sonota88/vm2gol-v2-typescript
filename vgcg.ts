@@ -563,12 +563,12 @@ function codegenSet(
   let srcVal = _srcVal;
 
   if (dest.match(/^vram\[(.+)\]$/)) {
-    const vramAddr = RegExp.$1;
+    const vramParam = RegExp.$1;
 
-    if (vramAddr.match(/^\d+$/)) {
+    if (vramParam.match(/^\d+$/)) {
       throw notYetImpl();
-    } else if (include(lvarNames, vramAddr)) {
-      const lvarRef = toLvarRef(lvarNames, vramAddr);
+    } else if (include(lvarNames, vramParam)) {
+      const lvarRef = toLvarRef(lvarNames, vramParam);
       alines.push(`  set_vram ${lvarRef} ${srcVal}`);
     } else {
       throw notYetImpl();
