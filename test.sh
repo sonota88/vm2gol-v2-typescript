@@ -52,6 +52,32 @@ test_cg(){
   fi
 }
 
+test_compile_nn() {
+  local nn="$1"; shift
+
+  local src_file="test/compile/${nn}.vg.txt"
+  local temp_vgt_file="z_tmp/test.vgt.json"
+  local temp_vga_file="z_tmp/test.vga.txt"
+  local exp_vga_file="test/compile/exp_${nn}.vga.txt"
+
+  run_parser $src_file $temp_vgt_file
+  run_codegen $temp_vgt_file $temp_vga_file
+
+  ruby test/diff.rb asm $exp_vga_file $temp_vga_file
+  if [ $? -ne 0 ]; then
+    errs="${errs},compile_${nn}_diff"
+  fi
+}
+
+test_compile() {
+  if [ $# -ge 1 ]; then
+    test_compile_nn "$1"
+  else
+    test_compile_nn 01
+    test_compile_nn 29
+  fi
+}
+
 test_all() {
   echo "==== deno test ===="
   deno test || errs="${errs},deno_test"
@@ -61,6 +87,9 @@ test_all() {
 
   echo "==== codegen ===="
   test_cg
+
+  echo "==== compile ===="
+  test_compile
 }
 
 # --------------------------------
@@ -72,8 +101,11 @@ case $cmd in
   parse | p*)
     test_parser
     ;;
-  codegen | c*)
+  codegen)
     test_cg
+    ;;
+  compile | c*)
+    test_compile "$@"
     ;;
   all | a*)
     test_all
