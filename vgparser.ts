@@ -160,6 +160,10 @@ class Parser {
     this.pos++;
   }
 
+  isEnd(): boolean {
+    return this.tokens.length <= this.pos;
+  }
+
   // --------------------------------
 
   _parseArg() {
@@ -561,10 +565,6 @@ class Parser {
     default:
       throw new Error();
     }
-  }
-
-  isEnd(): boolean {
-    return this.tokens.length <= this.pos;
   }
 
   parseStmts(): NodeList {
