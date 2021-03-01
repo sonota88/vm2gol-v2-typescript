@@ -147,7 +147,7 @@ class Parser {
   }
 
   assertValue(pos: number, exp: TokenValue) {
-    const t = this.tokens[pos];
+    const t = this.peek();
 
     if (t.value !== exp) {
       const msg = `Assertion failed: expected (${ Deno.inspect(exp) }) actual (${ Deno.inspect(t) })`
@@ -270,7 +270,7 @@ class Parser {
   parseVar(): NodeList {
     this.consume("var");
 
-    const t = this.tokens[this.pos + 1];
+    const t = this.peek(1);
 
     if (t.value === ";") {
       return this.parseVarDeclare();
