@@ -623,7 +623,7 @@ class Parser {
     const stmts = this.parseTopStmts();
 
     const nl = new NodeList();
-    nl.push("stmts");
+    nl.push("top_stmts");
     nl.pushAll(stmts.els);
 
     return nl;
