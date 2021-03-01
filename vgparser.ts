@@ -224,8 +224,7 @@ class Parser {
       if (t.value === "var") {
         stmts.push(this.parseVar());
       } else {
-        const stmt = this.parseStmt();
-          stmts.push(stmt);
+        stmts.push(this.parseStmt());
       }
     }
 
@@ -581,8 +580,7 @@ class Parser {
         break;
       }
 
-      const stmt = this.parseStmt();
-      stmts.push(stmt);
+      stmts.push(this.parseStmt());
     }
 
     return stmts;
