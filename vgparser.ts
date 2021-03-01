@@ -366,21 +366,16 @@ class Parser {
   parseCall(): NodeList {
     this.consume("call");
 
-    const t = this.peek();
-    this.pos++;
-    const funcName = t.value;
+    const funcall = this.parseFuncall();
+    const funcName = funcall.getAsString(0);
+    const args     = funcall.tl();
 
-    this.consume("(");
-
-    const args = this.parseArgs();
-
-    this.consume(")");
     this.consume(";");
 
     const nl = new NodeList();
     nl.push("call");
     nl.push(funcName);
-    nl.pushAll(args.els);
+    nl.pushAll(args);
 
     return nl;
   }
