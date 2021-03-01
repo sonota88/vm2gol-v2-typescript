@@ -1,5 +1,9 @@
 import { FileReader } from "./lib/file_reader.ts"
 
+import {
+  NodeList
+} from "./lib/types.ts"
+
 const textEncoder = new TextEncoder();
 
 const print_e = (arg: any) => {
@@ -77,38 +81,6 @@ function tokenize(src: string) {
   }
 
   return tokens;
-}
-
-// --------------------------------
-
-type NodeElem = string | number | NodeList;
-
-class NodeList {
-  els: NodeElem[];
-
-  constructor() {
-    this.els = [];
-  }
-
-  push(el: NodeElem) {
-    this.els.push(el);
-  }
-
-  pushAll(els: NodeElem[]) {
-    this.els.push(... els);
-  }
-
-  toPlain(): any {
-    return this.els.map(el => {
-      if (typeof el === "string" ||
-          typeof el === "number"
-         ) {
-        return el;
-      } else {
-        return el.toPlain();
-      }
-    });
-  }
 }
 
 // --------------------------------

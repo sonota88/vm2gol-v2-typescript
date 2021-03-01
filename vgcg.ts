@@ -5,6 +5,10 @@ import {
   notYetImpl
 } from "./lib/utils.ts"
 
+import {
+  NodeList
+} from "./lib/types.ts"
+
 function include<T>(xs: T[], x: T): boolean {
   for (let _x of xs) {
     if (_x === x) {
@@ -27,70 +31,6 @@ function NodeElems_getAsString(els: NodeElem[], i: number): string {
     return el;
   } else {
     throw invalidType(el);
-  }
-}
-
-class NodeList {
-  els: NodeElem[];
-
-  constructor() {
-    this.els = [];
-  }
-
-  append(el: NodeElem) {
-    this.els.push(el);
-  }
-
-  hd(): NodeElem {
-    return this.els[0];
-  }
-
-  tl(): NodeElem[] {
-    return this.els.slice(1);
-  }
-
-  toPlain(): PlainArray {
-    return this.els.map(el => {
-      if (typeof el === "number") {
-        return el;
-      } else if (typeof el === "string") {
-        return el;
-      } else {
-        return el.toPlain();
-      }
-    });
-  }
-
-  get() {
-    return this.els;
-  }
-
-  getAsString(i: number): string {
-    const el = this.get()[i];
-    if (typeof el === "string") {
-      return el;
-    } else {
-      throw invalidType(el);
-    }
-  }
-
-  getAsNodeList(i: number): NodeList {
-    const el = this.els[i];
-    if (el instanceof NodeList) {
-      return el;
-    } else {
-      throw invalidType(el);
-    }
-  }
-
-  size(): number {
-    return this.els.length;
-  }
-
-  static fromEls(els: NodeElem[]): NodeList {
-    const nl = new NodeList();
-    nl.els = els;
-    return nl;
   }
 }
 
@@ -124,7 +64,7 @@ const _parse = (json: string): [NodeList, number] => {
 
     if (rest[0] == "[") {
       const [childXs, size] = _parse(rest);
-      xs.append(childXs);
+      xs.push(childXs);
       pos += size;
     } else if (rest[0] == "]") {
       pos++;
@@ -137,11 +77,11 @@ const _parse = (json: string): [NodeList, number] => {
       pos++;
     } else if (rest.match(/^(-?\d+)/)) {
       const m1 = RegExp.$1;
-      xs.append(parseInt(m1));
+      xs.push(parseInt(m1));
       pos += m1.length;
     } else if (rest.match(/^"(.*?)"/)) {
       const m1 = RegExp.$1;
-      xs.append(m1);
+      xs.push(m1);
       pos += m1.length + 2;
     } else {
       throw notYetImpl(xs);
@@ -753,7 +693,7 @@ function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
 
   if (nodeElem instanceof NodeList) {
     fnArgNames =
-      nodeElem.toPlain().map(el => {
+      nodeElem.toPlain().map((el: NodeElem) => {
         if (typeof el === "string") {
           return el;
         } else {
