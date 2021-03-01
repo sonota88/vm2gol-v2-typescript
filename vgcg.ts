@@ -500,13 +500,13 @@ function _codegenCall_pushFnArg(
 function codegenCall(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeElem[]
+  stmtRest: NodeList
 ): Alines
 {
   const alines = new Alines();
 
-  const fnName = stmtRest[0];
-  const fnArgs = stmtRest.slice(1);
+  const fnName = stmtRest.getAsString(0);
+  const fnArgs = stmtRest.get().slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
     alines.pushAll(_codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg));
@@ -698,7 +698,7 @@ function codegenStmt(
   const stmtRest = stmt.tl();
 
   if (stmtHead === "call") {
-    alines.pushAll(codegenCall(fnArgNames, lvarNames, stmtRest));
+    alines.pushAll(codegenCall(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
   } else if (stmtHead === "call_set") {
     alines.pushAll(codegenCallSet(fnArgNames, lvarNames, stmtRest));
 
