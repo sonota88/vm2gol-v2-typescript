@@ -621,7 +621,7 @@ class Parser {
   }
 
   parse(): NodeList {
-    const stmts = this.parseStmts();
+    const stmts = this.parseTopStmts();
 
     const nl = new NodeList();
     nl.push("stmts");
