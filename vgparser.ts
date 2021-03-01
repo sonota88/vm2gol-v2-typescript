@@ -568,7 +568,6 @@ class Parser {
     }
 
     switch(t.value) {
-    case "func": return this.parseFunc();
     case "set": return this.parseSet();
     case "call": return this.parseCall();
     case "call_set": return this.parseCallSet();
