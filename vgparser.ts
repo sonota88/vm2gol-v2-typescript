@@ -217,7 +217,22 @@ class Parser {
     this.consume(")");
 
     this.consume("{");
-    const stmts = this.parseStmts();
+
+    const stmts = new NodeList();
+    while (this.peek().value !== "}") {
+      const t = this.peek();
+      if (t.value === "var") {
+        stmts.push(this.parseVar());
+      } else {
+        const stmt = this.parseStmt();
+        if (stmt == null) {
+          throw new Error();
+        } else {
+          stmts.push(stmt);
+        }
+      }
+    }
+
     this.consume("}");
 
     const nl = new NodeList();
@@ -554,7 +569,6 @@ class Parser {
 
     switch(t.value) {
     case "func": return this.parseFunc();
-    case "var": return this.parseVar();
     case "set": return this.parseSet();
     case "call": return this.parseCall();
     case "call_set": return this.parseCallSet();
