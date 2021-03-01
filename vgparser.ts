@@ -600,6 +600,26 @@ class Parser {
     return stmts;
   }
 
+  parseTopStmt(): NodeList {
+    const t = this.peek();
+
+    if (t.value === "func") {
+      return this.parseFunc();
+    } else {
+      throw new Error();
+    }
+  }
+
+  parseTopStmts(): NodeList {
+    const topStmts = new NodeList();
+
+    while (! this.isEnd()) {
+      topStmts.push(this.parseTopStmt());
+    }
+
+    return topStmts;
+  }
+
   parse(): NodeList {
     const stmts = this.parseStmts();
 
