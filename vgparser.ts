@@ -225,11 +225,7 @@ class Parser {
         stmts.push(this.parseVar());
       } else {
         const stmt = this.parseStmt();
-        if (stmt == null) {
-          throw new Error();
-        } else {
           stmts.push(stmt);
-        }
       }
     }
 
@@ -561,11 +557,8 @@ class Parser {
     return nl;
   }
 
-  parseStmt(): NodeList | null {
+  parseStmt(): NodeList {
     const t = this.peek();
-    if (t.value === "}") {
-      return null;
-    }
 
     switch(t.value) {
     case "set": return this.parseSet();
@@ -584,15 +577,11 @@ class Parser {
     const stmts = new NodeList();
 
     while (true) {
-      if (this.isEnd()) {
+      if (this.isEnd() || this.peek().value === "}") {
         break;
       }
 
       const stmt = this.parseStmt();
-      if (stmt == null) {
-        break;
-      }
-
       stmts.push(stmt);
     }
 
