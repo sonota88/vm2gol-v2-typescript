@@ -65,6 +65,15 @@ class NodeList {
     return this.els;
   }
 
+  getAsString(i: number): string {
+    const el = this.get()[i];
+    if (typeof el === "string") {
+      return el;
+    } else {
+      throw invalidType(el);
+    }
+  }
+
   getAsNodeList(i: number): NodeList {
     const el = this.els[i];
     if (el instanceof NodeList) {
