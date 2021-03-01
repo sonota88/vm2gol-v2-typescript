@@ -124,8 +124,8 @@ class Parser {
     this.pos = 0;
   }
 
-  peek() {
-    return this.tokens[this.pos];
+  peek(offset = 0) {
+    return this.tokens[this.pos + offset];
   }
 
   restHead() {
