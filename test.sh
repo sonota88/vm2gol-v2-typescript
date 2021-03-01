@@ -79,8 +79,8 @@ test_compile() {
 }
 
 test_all() {
-  echo "==== deno test ===="
-  deno test || errs="${errs},deno_test"
+  # echo "==== deno test ===="
+  # deno test || errs="${errs},deno_test"
 
   echo "==== parser ===="
   test_parser
