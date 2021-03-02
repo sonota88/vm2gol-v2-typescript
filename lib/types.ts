@@ -72,3 +72,22 @@ export class NodeList {
     return nl;
   }
 }
+
+// --------------------------------
+
+type TokenType = "kw" | "int" | "symbol" | "ident" | "str";
+export type TokenValue = string | number;
+
+export class Token {
+  _type: TokenType;
+  value: TokenValue;
+
+  constructor(_type: TokenType, value: TokenValue) {
+    this._type = _type;
+    this.value = value;
+  }
+
+  toLine(): string {
+    return `${this._type}:${this.value}`;
+  }
+}

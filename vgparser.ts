@@ -1,7 +1,9 @@
 import { FileReader } from "./lib/file_reader.ts"
 
 import {
-  NodeList
+  NodeList,
+  Token,
+  TokenValue
 } from "./lib/types.ts"
 
 const textEncoder = new TextEncoder();
@@ -20,19 +22,6 @@ const puts_e = (...args: any[]) => {
 
 
 // --------------------------------
-
-type TokenType = "kw" | "int" | "symbol" | "ident" | "str";
-type TokenValue = string | number;
-
-class Token {
-  _type: TokenType;
-  value: TokenValue;
-
-  constructor(_type: TokenType, value: TokenValue) {
-    this._type = _type;
-    this.value = value;
-  }
-}
 
 function tokenize(src: string) {
   const tokens = [];
