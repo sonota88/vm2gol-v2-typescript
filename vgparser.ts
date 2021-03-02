@@ -37,39 +37,33 @@ function readTokens(src: string) {
 
 type Expr = string | number | NodeList;
 
-class Parser {
-  tokens: Token[];
-  pos: number;
+let tokens: Token[];
+let pos = 0;
 
-  constructor(tokens: Token[]) {
-    this.tokens = tokens;
-    this.pos = 0;
+  function peek(offset = 0) {
+    return tokens[pos + offset];
   }
 
-  peek(offset = 0) {
-    return this.tokens[this.pos + offset];
-  }
-
-  restHead() {
-    return this.tokens
-      .slice(this.pos, this.pos + 8)
+  function restHead() {
+    return tokens
+      .slice(pos, pos + 8)
       .map(t => `${t._type}<${t.value}>`);
   }
 
-  dumpState(msg = null) {
+  function dumpState(msg = null) {
     puts_e(
       Deno.inspect(
         [
           msg,
-          this.pos,
-          this.restHead()
+          pos,
+          restHead()
         ]
       )
     );
   }
 
-  assertValue(pos: number, exp: TokenValue) {
-    const t = this.peek();
+  function assertValue(pos: number, exp: TokenValue) {
+    const t = peek();
 
     if (t.value !== exp) {
       const msg = `Assertion failed: expected (${ Deno.inspect(exp) }) actual (${ Deno.inspect(t) })`
@@ -77,80 +71,80 @@ class Parser {
     }
   }
 
-  consume(str: string) {
-    this.assertValue(this.pos, str);
-    this.pos++;
+  function consume(str: string) {
+    assertValue(pos, str);
+    pos++;
   }
 
-  isEnd(): boolean {
-    return this.tokens.length <= this.pos;
+  function isEnd(): boolean {
+    return tokens.length <= pos;
   }
 
   // --------------------------------
 
-  _parseArg() {
-    const t = this.peek();
+  function _parseArg() {
+    const t = peek();
 
     if (t._type === "ident") {
-      this.pos++;
+      pos++;
       return t.value;
     } else if (t._type === "int") {
-      this.pos++;
+      pos++;
       return t.getValueAsInt();
     } else {
       throw new Error();
     }
   }
 
-  _parseArgsFirst() {
-    return this._parseArg();
+  function _parseArgsFirst() {
+    return _parseArg();
   }
 
-  _parseArgsRest() {
-    this.consume(",");
-    return this._parseArg();
+  function _parseArgsRest() {
+    consume(",");
+    return _parseArg();
   }
 
-  parseArgs(): NodeList {
+  function parseArgs(): NodeList {
     const args = new NodeList();
 
-    if (this.peek().value === ")") {
+    if (peek().value === ")") {
       return args;
     }
 
-    args.push(this._parseArgsFirst());
+    args.push(_parseArgsFirst());
 
-    while (this.peek().value === ",") {
-      args.push(this._parseArgsRest());
+    while (peek().value === ",") {
+      args.push(_parseArgsRest());
     }
 
     return args;
   }
 
-  parseFunc(): NodeList {
-    this.consume("func");
+  function parseFunc(): NodeList {
+    consume("func");
 
-    const t = this.peek();
-    this.pos++;
+    const t = peek();
+    pos++;
     const funcName = t.value;
 
-    this.consume("(");
-    const args = this.parseArgs();
-    this.consume(")");
+    consume("(");
+    const args = parseArgs();
+    consume(")");
 
-    this.consume("{");
+    consume("{");
 
     const stmts = new NodeList();
-    while (this.peek().value !== "}") {
-      const t = this.peek();
+    while (peek().value !== "}") {
+      const t = peek();
       if (t.value === "var") {
-        stmts.push(this.parseVar());
+        stmts.push(parseVar());
       } else {
-        stmts.push(this.parseStmt());
+        stmts.push(parseStmt());
       }
     }
 
-    this.consume("}");
+    consume("}");
 
     const nl = new NodeList();
     nl.pushAll([
@@ -164,13 +158,13 @@ class Parser {
   }
 
 
-  parseVarDeclare(): NodeList {
-    const t = this.peek();
-    this.pos++;
+  function parseVarDeclare(): NodeList {
+    const t = peek();
+    pos++;
 
     const varName = t.value;
     
-    this.consume(";");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("var");
@@ -179,17 +173,17 @@ class Parser {
     return nl;
   }
 
-  parseVarInit(): NodeList {
-    const t = this.peek();
-    this.pos++;
+  function parseVarInit(): NodeList {
+    const t = peek();
+    pos++;
 
     const varName = t.value;
     
-    this.consume("=");
+    consume("=");
 
-    const expr = this.parseExpr();
+    const expr = parseExpr();
 
-    this.consume(";");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("var");
@@ -199,25 +193,25 @@ class Parser {
     return nl;
   }
 
-  parseVar(): NodeList {
-    this.consume("var");
+  function parseVar(): NodeList {
+    consume("var");
 
-    const t = this.peek(1);
+    const t = peek(1);
 
     if (t.value === ";") {
-      return this.parseVarDeclare();
+      return parseVarDeclare();
     } else if (t.value === "=") {
-      return this.parseVarInit();
+      return parseVarInit();
     } else {
       throw new Error();
     }
   }
 
 
-  parseExprRight(
+  function parseExprRight(
     exprL: Expr // TODO
   ): Expr {
-    const t = this.peek();
+    const t = peek();
 
     if (t.value === ";" || t.value === ")") {
       return exprL;
@@ -228,8 +222,8 @@ class Parser {
 
     switch(t.value) {
     case "+":
-      this.consume("+");
-      exprR = this.parseExpr();
+      consume("+");
+      exprR = parseExpr();
       nl = new NodeList();
       nl.push("+");
       nl.push(exprL);
@@ -237,8 +231,8 @@ class Parser {
       return nl;
 
     case "*":
-      this.consume("*");
-      exprR = this.parseExpr();
+      consume("*");
+      exprR = parseExpr();
       nl = new NodeList();
       nl.push("*");
       nl.push(exprL);
@@ -246,8 +240,8 @@ class Parser {
       return nl;
 
     case "==":
-      this.consume("==");
-      exprR = this.parseExpr();
+      consume("==");
+      exprR = parseExpr();
       nl = new NodeList();
       nl.push("eq");
       nl.push(exprL);
@@ -255,8 +249,8 @@ class Parser {
       return nl;
 
     case "!=":
-      this.consume("!=");
-      exprR = this.parseExpr();
+      consume("!=");
+      exprR = parseExpr();
       nl = new NodeList();
       nl.push("neq");
       nl.push(exprL);
@@ -268,44 +262,44 @@ class Parser {
     }
   }
 
-  parseExpr(): Expr {
-    const tLeft = this.peek();
+  function parseExpr(): Expr {
+    const tLeft = peek();
 
     if (tLeft.value === "(") {
-      this.consume("(");
-      const exprL = this.parseExpr();
-      this.consume(")");
+      consume("(");
+      const exprL = parseExpr();
+      consume(")");
 
-      return this.parseExprRight(exprL);
+      return parseExprRight(exprL);
     }
 
     if (tLeft._type === "int") {
-      this.pos++;
+      pos++;
 
       const exprL = tLeft.getValueAsInt();
-      return this.parseExprRight(exprL);
+      return parseExprRight(exprL);
     } else if (tLeft._type === "ident") {
-      this.pos++;
+      pos++;
 
       const exprL = tLeft.value;
-      return this.parseExprRight(exprL);
+      return parseExprRight(exprL);
     } else {
       throw new Error();
     }
   }
 
-  parseSet(): NodeList {
-    this.consume("set");
+  function parseSet(): NodeList {
+    consume("set");
 
-    const t = this.peek();
-    this.pos++;
+    const t = peek();
+    pos++;
     const varName = t.value;
 
-    this.consume("=");
+    consume("=");
 
-    const expr = this.parseExpr();
+    const expr = parseExpr();
 
-    this.consume(";");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("set");
@@ -315,14 +309,14 @@ class Parser {
     return nl;
   }
 
-  parseCall(): NodeList {
-    this.consume("call");
+  function parseCall(): NodeList {
+    consume("call");
 
-    const funcall = this.parseFuncall();
+    const funcall = parseFuncall();
     const funcName = funcall.getAsString(0);
     const args     = funcall.tl();
 
-    this.consume(";");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("call");
@@ -332,15 +326,15 @@ class Parser {
     return nl;
   }
 
-  parseFuncall(): NodeList {
-    const t = this.peek();
-    this.pos++;
+  function parseFuncall(): NodeList {
+    const t = peek();
+    pos++;
 
     const funcName = t.value;
 
-    this.consume("(");
-    const args = this.parseArgs();
-    this.consume(")");
+    consume("(");
+    const args = parseArgs();
+    consume(")");
 
     const nl = new NodeList();
     nl.push(funcName);
@@ -349,19 +343,19 @@ class Parser {
     return nl;
   }
 
-  parseCallSet(): NodeList {
-    this.consume("call_set");
+  function parseCallSet(): NodeList {
+    consume("call_set");
 
-    const t = this.peek();
-    this.pos++;
+    const t = peek();
+    pos++;
 
     const varName = t.value;
 
-    this.consume("=");
+    consume("=");
 
-    const expr = this.parseFuncall();
+    const expr = parseFuncall();
 
-    this.consume(";");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("call_set");
@@ -371,21 +365,21 @@ class Parser {
     return nl;
   }
 
-  parseReturn(): NodeList {
-    this.consume("return");
+  function parseReturn(): NodeList {
+    consume("return");
 
-    const t = this.peek();
+    const t = peek();
 
     if (t.value == ";") {
-      this.consume(";");
+      consume(";");
 
       const nl = new NodeList();
       nl.push("return");
       return nl;
       
     } else {
-      const expr = this.parseExpr();
-      this.consume(";");
+      const expr = parseExpr();
+      consume(";");
 
       const nl = new NodeList();
       nl.push("return");
@@ -394,14 +388,14 @@ class Parser {
     }
   }
 
-  _parseWhenClause(): NodeList {
-    this.consume("(");
-    const expr = this.parseExpr();
-    this.consume(")");
+  function _parseWhenClause(): NodeList {
+    consume("(");
+    const expr = parseExpr();
+    consume(")");
 
-    this.consume("{");
-    const stmts = this.parseStmts();
-    this.consume("}");
+    consume("{");
+    const stmts = parseStmts();
+    consume("}");
 
     const nl = new NodeList();
     nl.push(expr);
@@ -410,23 +404,23 @@ class Parser {
     return nl;
   }
 
-  parseCase(): NodeList {
-    this.consume("case");
+  function parseCase(): NodeList {
+    consume("case");
 
-    this.consume("{");
+    consume("{");
 
     const whenClauses: NodeList[] = [];
 
     while (true) {
-      const t = this.peek();
+      const t = peek();
       if (t.value === "}") {
         break;
       }
 
-      whenClauses.push(this._parseWhenClause());
+      whenClauses.push(_parseWhenClause());
     }
 
-    this.consume("}");
+    consume("}");
 
     const nl = new NodeList();
     nl.push("case");
@@ -437,16 +431,16 @@ class Parser {
     return nl;
   }
 
-  parseWhile(): NodeList {
-    this.consume("while");
+  function parseWhile(): NodeList {
+    consume("while");
 
-    this.consume("(");
-    const expr = this.parseExpr();
-    this.consume(")");
+    consume("(");
+    const expr = parseExpr();
+    consume(")");
 
-    this.consume("{");
-    const stmts = this.parseStmts();
-    this.consume("}");
+    consume("{");
+    const stmts = parseStmts();
+    consume("}");
 
     const nl = new NodeList();
     nl.push("while");
@@ -456,17 +450,17 @@ class Parser {
     return nl;
   }
 
-  parseVmComment(): NodeList {
-    this.consume("_cmt");
-    this.consume("(");
+  function parseVmComment(): NodeList {
+    consume("_cmt");
+    consume("(");
 
-    const t = this.peek();
-    this.pos++;
+    const t = peek();
+    pos++;
 
     const comment = t.value;
 
-    this.consume(")");
-    this.consume(";");
+    consume(")");
+    consume(";");
 
     const nl = new NodeList();
     nl.push("_cmt");
@@ -475,58 +469,58 @@ class Parser {
     return nl;
   }
 
-  parseStmt(): NodeList {
-    const t = this.peek();
+  function parseStmt(): NodeList {
+    const t = peek();
 
     switch(t.value) {
-    case "set": return this.parseSet();
-    case "call": return this.parseCall();
-    case "call_set": return this.parseCallSet();
-    case "return": return this.parseReturn();
-    case "while": return this.parseWhile();
-    case "case": return this.parseCase();
-    case "_cmt": return this.parseVmComment();
+    case "set": return parseSet();
+    case "call": return parseCall();
+    case "call_set": return parseCallSet();
+    case "return": return parseReturn();
+    case "while": return parseWhile();
+    case "case": return parseCase();
+    case "_cmt": return parseVmComment();
     default:
       throw new Error();
     }
   }
 
-  parseStmts(): NodeList {
+  function parseStmts(): NodeList {
     const stmts = new NodeList();
 
     while (true) {
-      if (this.isEnd() || this.peek().value === "}") {
+      if (isEnd() || peek().value === "}") {
         break;
       }
 
-      stmts.push(this.parseStmt());
+      stmts.push(parseStmt());
     }
 
     return stmts;
   }
 
-  parseTopStmt(): NodeList {
-    const t = this.peek();
+  function parseTopStmt(): NodeList {
+    const t = peek();
 
     if (t.value === "func") {
-      return this.parseFunc();
+      return parseFunc();
     } else {
       throw new Error();
     }
   }
 
-  parseTopStmts(): NodeList {
+  function parseTopStmts(): NodeList {
     const topStmts = new NodeList();
 
-    while (! this.isEnd()) {
-      topStmts.push(this.parseTopStmt());
+    while (! isEnd()) {
+      topStmts.push(parseTopStmt());
     }
 
     return topStmts;
   }
 
-  parse(): NodeList {
-    const stmts = this.parseTopStmts();
+  function parse(): NodeList {
+    const stmts = parseTopStmts();
 
     const nl = new NodeList();
     nl.push("top_stmts");
@@ -534,22 +528,19 @@ class Parser {
 
     return nl;
   }
-}
 
 // --------------------------------
 
 const src = await FileReader.readAll(Deno.args[0]);
 
-const tokens = readTokens(src);
-
-const parser = new Parser(tokens);
+tokens = readTokens(src);
 
 let tree;
 
 try {
-  tree = parser.parse();
+  tree = parse();
 } catch(e) {
-  parser.dumpState();
+  dumpState();
   throw e;
 }
 
