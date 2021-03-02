@@ -3,6 +3,8 @@
 set -o nounset
 set -o errexit
 
+readonly TMP_DIR=z_tmp
+
 # --------------------------------
 
 run_lexer() {
@@ -30,8 +32,8 @@ run_codegen() {
 # --------------------------------
 
 test_parser(){
-  local tokens_file=z_test.tokens.txt
-  local actual=z_test.vgt.json
+  local tokens_file=${TMP_DIR}/test.tokens.txt
+  local actual=${TMP_DIR}/test.vgt.json
 
   run_lexer gol.vg.txt $tokens_file
   local st=$?
@@ -52,7 +54,7 @@ test_parser(){
 }
 
 test_cg(){
-  local actual=z_test.vga.txt
+  local actual=${TMP_DIR}/test.vga.txt
 
   run_codegen test/gol.vgt.json $actual
   local st=$?
@@ -70,9 +72,9 @@ test_compile_nn() {
   local nn="$1"; shift
 
   local src_file="test/compile/${nn}.vg.txt"
-  local temp_tokens_file="z_tmp/z_test.tokens.txt"
-  local temp_vgt_file="z_tmp/test.vgt.json"
-  local temp_vga_file="z_tmp/test.vga.txt"
+  local temp_tokens_file="${TMP_DIR}/z_test.tokens.txt"
+  local temp_vgt_file="${TMP_DIR}/test.vgt.json"
+  local temp_vga_file="${TMP_DIR}/test.vga.txt"
   local exp_vga_file="test/compile/exp_${nn}.vga.txt"
 
   run_lexer $src_file $temp_tokens_file
