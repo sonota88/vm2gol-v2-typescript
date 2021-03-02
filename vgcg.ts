@@ -214,19 +214,14 @@ function codegenCase(
 function codegenWhile(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeElem[]
+  rest: NodeList
 ): Alines
 {
   const alines = new Alines();
 
-  const condExpr = NodeList.fromEls(rest).getAsNodeList(0);
+  const condExpr = rest.getAsNodeList(0);
 
-  const body = rest[1];
-  if (body instanceof NodeList) {
-    // OK
-  } else {
-    throw invalidType(body);
-  }
+  const body = rest.getAsNodeList(1);
 
   globalLabelId++;
   const labelId = globalLabelId;
@@ -652,7 +647,7 @@ function codegenStmt(
     alines.pushAll(codegenCase(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
 
   } else if (stmtHead === "while") {
-    alines.pushAll(codegenWhile(fnArgNames, lvarNames, stmtRest));
+    alines.pushAll(codegenWhile(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
 
   } else if (stmtHead === "_cmt") {
     const cmt = NodeElems_getAsString(stmtRest, 0);
