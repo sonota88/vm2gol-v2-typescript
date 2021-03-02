@@ -76,7 +76,7 @@ export class NodeList {
 // --------------------------------
 
 type TokenType = "kw" | "int" | "symbol" | "ident" | "str";
-export type TokenValue = string | number;
+export type TokenValue = string;
 
 export class Token {
   _type: TokenType;
@@ -85,6 +85,10 @@ export class Token {
   constructor(_type: TokenType, value: TokenValue) {
     this._type = _type;
     this.value = value;
+  }
+
+  getValueAsInt(): number {
+    return parseInt(this.value);
   }
 
   toLine(): string {

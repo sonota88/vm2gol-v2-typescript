@@ -50,7 +50,7 @@ function tokenize(src: string) {
 
     } else if (rest.match(/^(-?[0-9]+)/)) {
       const str = RegExp.$1;
-      tokens.push(new Token("int", parseInt(str)));
+      tokens.push(new Token("int", str));
       pos += str.length;
 
     } else if (rest.match(/^(==|!=|[\(\)\{\}=;\+\*,])/)) {
@@ -135,7 +135,7 @@ class Parser {
       return t.value;
     } else if (t._type === "int") {
       this.pos++;
-      return t.value;
+      return t.getValueAsInt();
     } else {
       throw new Error();
     }
@@ -318,10 +318,12 @@ class Parser {
       return this.parseExprRight(exprL);
     }
 
-    if (
-      tLeft._type === "int" ||
-        tLeft._type === "ident"
-    ) {
+    if (tLeft._type === "int") {
+      this.pos++;
+
+      const exprL = tLeft.getValueAsInt();
+      return this.parseExprRight(exprL);
+    } else if (tLeft._type === "ident") {
       this.pos++;
 
       const exprL = tLeft.value;
