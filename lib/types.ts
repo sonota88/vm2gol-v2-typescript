@@ -94,4 +94,10 @@ export class Token {
   toLine(): string {
     return `${this._type}:${this.value}`;
   }
+
+  static fromLine(line: string): Token {
+    const parts = line.split(":");
+    const type: TokenType = <TokenType>parts[0];
+    return new Token(type, parts[1]);
+  }
 }
