@@ -25,15 +25,6 @@ type NodeElem = string | number | NodeList;
 type PlainElem = string | number | PlainArray;
 type PlainArray = PlainElem[];
 
-function NodeElems_getAsString(els: NodeElem[], i: number): string {
-  const el = els[i];
-  if (typeof el === "string") {
-    return el;
-  } else {
-    throw invalidType(el);
-  }
-}
-
 // Assembly lines
 class Alines {
   alines: string[];
@@ -462,7 +453,7 @@ function codegenCallSet(
 {
   const alines = new Alines();
 
-  const lvarName = NodeElems_getAsString(stmtRest, 0);
+  const lvarName = NodeList.fromEls(stmtRest).getAsString(0);
   const fnTemp = NodeList.fromEls(stmtRest).getAsNodeList(1);
 
   const fnName = fnTemp.hd();
@@ -544,7 +535,7 @@ function codegenSet(
 {
   const alines = new Alines();
 
-  let dest = NodeElems_getAsString(rest, 0);
+  let dest = NodeList.fromEls(rest).getAsString(0);
 
   const [_alines, _srcVal] = codegenSet_srcVal(fnArgNames, lvarNames, rest);
   alines.pushAll(_alines);
@@ -650,7 +641,7 @@ function codegenStmt(
     alines.pushAll(codegenWhile(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
 
   } else if (stmtHead === "_cmt") {
-    const cmt = NodeElems_getAsString(stmtRest, 0);
+    const cmt = NodeList.fromEls(stmtRest).getAsString(0);
     alines.pushAll(codegenVmComment(cmt));
 
   } else {
@@ -746,7 +737,7 @@ function codegenFunc(rest: NodeElem[]): Alines {
     if (stmtHead === "var") {
       const stmtRest: NodeElem[] = stmt.tl();
 
-      const lvarName = NodeElems_getAsString(stmtRest, 0);
+      const lvarName = NodeList.fromEls(stmtRest).getAsString(0);
       lvarNames.push(lvarName);
 
       alines.pushAll(
@@ -796,7 +787,7 @@ function codegenTopStmts(
       alines.pushAll(codegenFunc(stmtRest));
 
     } else if (stmtHead === "_cmt") {
-      const cmt = NodeElems_getAsString(stmtRest, 0);
+      const cmt = NodeList.fromEls(stmtRest).getAsString(0);
 
       alines.pushAll(codegenVmComment(cmt));
 
