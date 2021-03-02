@@ -5,6 +5,13 @@ set -o errexit
 
 # --------------------------------
 
+run_lexer() {
+  local infile="$1"; shift
+  local outfile="$1"; shift
+
+  deno run --allow-read vglexer.ts $infile > $outfile
+}
+
 run_parser() {
   local infile="$1"; shift
   local outfile="$1"; shift
@@ -23,9 +30,16 @@ run_codegen() {
 # --------------------------------
 
 test_parser(){
+  local tokens_file=z_test.tokens.txt
   local actual=z_test.vgt.json
 
-  run_parser gol.vg.txt $actual
+  run_lexer gol.vg.txt $tokens_file
+  local st=$?
+  if [ $st -ne 0 ]; then
+    exit $st
+  fi
+
+  run_parser $tokens_file $actual
   local st=$?
   if [ $st -ne 0 ]; then
     exit $st
@@ -56,11 +70,13 @@ test_compile_nn() {
   local nn="$1"; shift
 
   local src_file="test/compile/${nn}.vg.txt"
+  local temp_tokens_file="z_tmp/z_test.tokens.txt"
   local temp_vgt_file="z_tmp/test.vgt.json"
   local temp_vga_file="z_tmp/test.vga.txt"
   local exp_vga_file="test/compile/exp_${nn}.vga.txt"
 
-  run_parser $src_file $temp_vgt_file
+  run_lexer $src_file $temp_tokens_file
+  run_parser $temp_tokens_file $temp_vgt_file
   run_codegen $temp_vgt_file $temp_vga_file
 
   ruby test/diff.rb asm $exp_vga_file $temp_vga_file

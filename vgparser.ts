@@ -20,55 +20,16 @@ const puts_e = (...args: any[]) => {
   }
 };
 
-
 // --------------------------------
 
-function tokenize(src: string) {
-  const tokens = [];
-  let pos = 0;
-
-  while (pos < src.length) {
-    const rest = src.slice(pos);
-
-    if (rest.match(/^([ \n]+)/)) {
-      const str = RegExp.$1;
-      pos += str.length;
-
-    } else if (rest.match(/^(\/\/.*)/)) {
-      const str = RegExp.$1;
-      pos += str.length;
-
-    } else if (rest.match(/^"(.*?)"/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("str", str));
-      pos += str.length + 2;
-
-    } else if (rest.match(/^(func)[^a-z_]/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("kw", str));
-      pos += str.length;
-
-    } else if (rest.match(/^(-?[0-9]+)/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("int", str));
-      pos += str.length;
-
-    } else if (rest.match(/^(==|!=|[\(\)\{\}=;\+\*,])/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("symbol", str));
-      pos += str.length;
-
-    } else if (rest.match(/^([a-z_][a-z0-9_\[\]]*)/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("ident", str));
-      pos += str.length;
-
-    } else {
-      const msg = "rest=\n>>" + rest.substring(0, 50) + "<<";
-      throw new Error("not yet impl: " + msg);
-    }
-  }
-
+function readTokens(src: string) {
+  const lines = src.split("\n");
+  const tokens: Token[] = [];
+  lines
+    .filter(line => 0 < line.length )
+    .forEach(line => {
+        tokens.push(Token.fromLine(line));
+      });
   return tokens;
 }
 
@@ -579,7 +540,7 @@ class Parser {
 
 const src = await FileReader.readAll(Deno.args[0]);
 
-const tokens = tokenize(src);
+const tokens = readTokens(src);
 
 const parser = new Parser(tokens);
 

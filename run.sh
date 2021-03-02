@@ -13,10 +13,14 @@ fi
 
 bname=run
 infile="$1"
+tokens_file=${TMPDIR}/${bname}.tokens.txt
 tree_file=${TMPDIR}/${bname}.vgt.json
 
 deno run --allow-read \
-  vgparser.ts $infile > $tree_file
+  vglexer.ts $infile > $tokens_file
+
+deno run --allow-read \
+  vgparser.ts $tokens_file > $tree_file
 
 deno run --allow-read \
   vgcg.ts $tree_file
