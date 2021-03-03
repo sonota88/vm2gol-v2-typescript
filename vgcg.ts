@@ -518,22 +518,22 @@ function codegenStmt(
   stmt: NodeList
 ) {
   const stmtHead = stmt.hd();
-  const stmtRest = stmt.tl();
+  const stmtRest = NodeList.fromEls(stmt.tl());
 
   if (stmtHead === "call") {
-    codegenCall(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenCall(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "call_set") {
-    codegenCallSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenCallSet(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "set") {
-    codegenSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenSet(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "return") {
-    codegenReturn(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenReturn(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "case") {
-    codegenCase(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenCase(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "while") {
-    codegenWhile(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+    codegenWhile(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "_cmt") {
-    const cmt = NodeList.fromEls(stmtRest).getAsString(0);
+    const cmt = stmtRest.getAsString(0);
     codegenVmComment(cmt);
   } else {
     throw notYetImpl("stmtHead", stmtHead);
