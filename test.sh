@@ -53,21 +53,6 @@ test_parser(){
   fi
 }
 
-test_cg(){
-  local actual=${TMP_DIR}/test.vga.txt
-
-  run_codegen test/gol.vgt.json $actual
-  local st=$?
-  if [ $st -ne 0 ]; then
-    exit $st
-  fi
-
-  diff -uw test/gol.vga.txt $actual
-  if [ $? -ne 0 ]; then
-    errs="${errs},cg"
-  fi
-}
-
 test_compile_nn() {
   local nn="$1"; shift
 
@@ -102,9 +87,6 @@ test_all() {
 
   echo "==== parser ===="
   test_parser
-
-  echo "==== codegen ===="
-  test_cg
 
   echo "==== compile ===="
   test_compile
