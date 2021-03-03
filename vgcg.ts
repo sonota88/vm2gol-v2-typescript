@@ -473,9 +473,9 @@ function codegenSet(
 function codegenReturn(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeElem[]
+  stmtRest: NodeList
 ) {
-  const retval = stmtRest[0];
+  const retval = stmtRest.get()[0];
 
   if (typeof retval === "number") {
     throw notYetImpl(retval);
@@ -527,7 +527,7 @@ function codegenStmt(
   } else if (stmtHead === "set") {
     codegenSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
   } else if (stmtHead === "return") {
-    codegenReturn(fnArgNames, lvarNames, stmtRest);
+    codegenReturn(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
   } else if (stmtHead === "case") {
     codegenCase(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
   } else if (stmtHead === "while") {
