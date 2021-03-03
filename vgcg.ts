@@ -80,7 +80,7 @@ function toFnArgRef(
 ): string
 {
   const index = fnArgNames.indexOf(fnArgName);
-  return `[bp+${index + 2}]`;
+  return `[bp:${index + 2}]`;
 }
 
 function toLvarRef(
@@ -89,7 +89,7 @@ function toLvarRef(
 ): string
 {
   const index = lvarNames.indexOf(lvarName);
-  return `[bp-${index + 1}]`;
+  return `[bp:-${index + 1}]`;
 }
 
 function matchVram(str: string): string {
