@@ -575,18 +575,14 @@ function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
   return fnArgNames;
 }
 
-function codegenFunc(rest: NodeElem[]) {
-  const fnName = rest[0];
+function codegenFunc(rest: NodeList) {
+  const fnName = rest.getAsString(0);
 
-  const fnArgNames = codegenFunc_getFnArgNames(rest[1]);
+  const fnArgNames = codegenFunc_getFnArgNames(rest.get()[1]);
 
   let body: NodeList;
 
-  if (rest[2] instanceof NodeList) {
-    body = rest[2];
-  } else {
-    throw new Error("invalid type");
-  }
+  body = rest.getAsNodeList(2);
 
   puts(``);
   puts(`label ${fnName}`);
@@ -655,7 +651,7 @@ function codegenTopStmts(
     }
 
     if (stmtHead === "func") {
-      codegenFunc(stmtRest);
+      codegenFunc(NodeList.fromEls(stmtRest));
 
     } else if (stmtHead === "_cmt") {
       const cmt = NodeList.fromEls(stmtRest).getAsString(0);
