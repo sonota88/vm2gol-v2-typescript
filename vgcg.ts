@@ -22,6 +22,21 @@ function include<T>(xs: T[], x: T): boolean {
   return false;
 }
 
+function inspect(xs: NodeList): string {
+  let s = ""
+  xs.get().forEach((x, i) => {
+    if (1 <= i) {
+      s += ", ";
+    }
+    if (typeof x === "string") {
+      s += `"${x}"`;
+    } else {
+      s += x;
+    }
+  });
+  return `[ ${s} ]`;
+}
+
 // --------------------------------
 
 type NodeElem = string | number | NodeList;
@@ -144,7 +159,7 @@ function codegenCase(
     const condHead = cond.hd();
     // const condRest = cond.tl();
 
-    puts(`  # 条件 ${labelId}_${whenIndex}: ${Deno.inspect(cond.toPlain())}`);
+    puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
     if (condHead === "eq") {
       codegenExpr(fnArgNames, lvarNames, cond.get());
