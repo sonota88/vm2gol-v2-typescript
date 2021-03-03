@@ -627,23 +627,17 @@ function codegenStmt(
     alines.pushAll(codegenCall(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
   } else if (stmtHead === "call_set") {
     alines.pushAll(codegenCallSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
-
   } else if (stmtHead === "set") {
     alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
-
   } else if (stmtHead === "return") {
     alines.pushAll(codegenReturn(fnArgNames, lvarNames, stmtRest));
-
   } else if (stmtHead === "case") {
     alines.pushAll(codegenCase(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
-
   } else if (stmtHead === "while") {
     alines.pushAll(codegenWhile(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
-
   } else if (stmtHead === "_cmt") {
     const cmt = NodeList.fromEls(stmtRest).getAsString(0);
     alines.pushAll(codegenVmComment(cmt));
-
   } else {
     throw notYetImpl("stmtHead", stmtHead);
   }
