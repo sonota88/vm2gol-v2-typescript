@@ -448,13 +448,13 @@ function codegenCall(
 function codegenCallSet(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeElem[]
+  stmtRest: NodeList
 ): Alines
 {
   const alines = new Alines();
 
-  const lvarName = NodeList.fromEls(stmtRest).getAsString(0);
-  const fnTemp = NodeList.fromEls(stmtRest).getAsNodeList(1);
+  const lvarName = stmtRest.getAsString(0);
+  const fnTemp = stmtRest.getAsNodeList(1);
 
   const fnName = fnTemp.hd();
   const fnArgs = fnTemp.tl();
@@ -626,7 +626,7 @@ function codegenStmt(
   if (stmtHead === "call") {
     alines.pushAll(codegenCall(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
   } else if (stmtHead === "call_set") {
-    alines.pushAll(codegenCallSet(fnArgNames, lvarNames, stmtRest));
+    alines.pushAll(codegenCallSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest)));
 
   } else if (stmtHead === "set") {
     alines.pushAll(codegenSet(fnArgNames, lvarNames, stmtRest));
