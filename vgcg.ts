@@ -112,7 +112,7 @@ function codegenVar(
   puts(`  sub_sp 1`);
 
   if (stmtRest.size() === 2) {
-    codegenSet(fnArgNames, lvarNames, stmtRest.get());
+    codegenSet(fnArgNames, lvarNames, stmtRest);
   }
 }
 
@@ -393,9 +393,11 @@ function codegenCallSet(
 function codegenSet_srcVal(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeElem[]
+  arg_rest: NodeList
 ): string
 {
+  const rest = arg_rest.get();
+
   if (typeof rest[1] === "number") {
     return String(rest[1]);
 
@@ -444,9 +446,9 @@ function codegenSet_srcVal(
 function codegenSet(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeElem[]
+  rest: NodeList
 ) {
-  let dest = NodeList.fromEls(rest).getAsString(0);
+  let dest = rest.getAsString(0);
 
   const srcVal = codegenSet_srcVal(fnArgNames, lvarNames, rest);
 
@@ -523,7 +525,7 @@ function codegenStmt(
   } else if (stmtHead === "call_set") {
     codegenCallSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
   } else if (stmtHead === "set") {
-    codegenSet(fnArgNames, lvarNames, stmtRest);
+    codegenSet(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
   } else if (stmtHead === "return") {
     codegenReturn(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "case") {
