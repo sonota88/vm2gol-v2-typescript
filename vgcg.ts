@@ -139,7 +139,7 @@ function codegenCase(
       throw invalidType(whenBlock);
     }
     const cond = whenBlock.getAsNodeList(0);
-    const rest = whenBlock.tl();
+    const rest = NodeList.fromEls(whenBlock.tl());
 
     const condHead = cond.hd();
     // const condRest = cond.tl();
@@ -204,7 +204,7 @@ function codegenWhile(
   puts(`  jump ${labelEnd}`);
 
   puts(`label ${labelTrue}`);
-  codegenStmts(fnArgNames, lvarNames, body.get());
+  codegenStmts(fnArgNames, lvarNames, body);
 
   // ループの先頭に戻る
   puts(`  jump ${labelBegin}`);
@@ -543,9 +543,9 @@ function codegenStmt(
 function codegenStmts(
   fnArgNames: string[],
   lvarNames: string[],
-  stmts: NodeElem[]
+  stmts: NodeList
 ) {
-  for (let stmt of stmts) {
+  for (let stmt of stmts.get()) {
     if (stmt instanceof NodeList) {
       ;
     } else {
