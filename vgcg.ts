@@ -636,7 +636,7 @@ function codegenTopStmts(
 ) {
   for (let stmt of rest) {
     let stmtHead: string;
-    let stmtRest: NodeElem[];
+    let stmtRest: NodeList;
 
     if (stmt instanceof NodeList) {
       const hd = stmt.hd();
@@ -645,16 +645,16 @@ function codegenTopStmts(
       } else {
         throw invalidType(hd);
       }
-      stmtRest = stmt.tl();
+      stmtRest = NodeList.fromEls(stmt.tl());
     } else {
       throw invalidType(stmt);
     }
 
     if (stmtHead === "func") {
-      codegenFunc(NodeList.fromEls(stmtRest));
+      codegenFunc(stmtRest);
 
     } else if (stmtHead === "_cmt") {
-      const cmt = NodeList.fromEls(stmtRest).getAsString(0);
+      const cmt = stmtRest.getAsString(0);
 
       codegenVmComment(cmt);
 
