@@ -325,6 +325,23 @@ function codegenExpr(
     } else if (include(lvarNames, expr)) {
       const cpSrc = toLvarRef(lvarNames, expr);
       puts(`  cp ${cpSrc} reg_a`);
+
+    } else if (matchVram(expr) !== "") {
+      const vramParam = matchVram(expr);
+
+      if (vramParam.match(/^\d+$/)) {
+        throw notYetImpl();
+      } else {
+        const vramParam = RegExp.$1;
+
+        if (include(lvarNames, vramParam)) {
+          const lvarRef = toLvarRef(lvarNames, vramParam);
+          puts(`  get_vram ${lvarRef} reg_a`);
+        } else {
+          throw notYetImpl();
+        }
+      }
+
     } else {
       throw notYetImpl(expr);
     }
