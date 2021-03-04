@@ -344,6 +344,18 @@ function codegenExpr(
 ) {
   if (typeof expr === "number") {
     puts(`  cp ${expr} reg_a`);
+
+  } else if (typeof expr === "string") {
+    if (include(fnArgNames, expr)) {
+      const cpSrc = toFnArgRef(fnArgNames, expr);
+      puts(`  cp ${cpSrc} reg_a`);
+    } else if (include(lvarNames, expr)) {
+      const cpSrc = toLvarRef(lvarNames, expr);
+      puts(`  cp ${cpSrc} reg_a`);
+    } else {
+      throw notYetImpl(expr);
+    }
+
   } else if (expr instanceof NodeList) {
     _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
   } else {
