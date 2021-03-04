@@ -396,59 +396,6 @@ function codegenCallSet(
   puts(`  cp reg_a ${lvarRef}`);
 }
 
-function codegenSet_srcVal(
-  fnArgNames: string[],
-  lvarNames: string[],
-  arg_rest: NodeList
-): string
-{
-  const rest = arg_rest.get();
-
-  if (typeof rest[1] === "number") {
-    return String(rest[1]);
-
-  } else if (rest[1] instanceof NodeList) {
-    const expr = NodeList.fromEls(rest).getAsNodeList(1);
-    _codegenExpr_binary(fnArgNames, lvarNames, expr.els);
-
-    return "reg_a";
-
-  } else if (typeof rest[1] === "string") {
-    if (include(fnArgNames, rest[1])) {
-      const fnArgRef = toFnArgRef(fnArgNames, rest[1]);
-      return fnArgRef;
-    } else if (include(lvarNames, rest[1])) {
-      const lvarRef = toLvarRef(lvarNames, rest[1]);
-      return lvarRef;
-
-    } else if (matchVram(rest[1]) !== "") {
-      const vramParam = matchVram(rest[1]);
-
-      if (vramParam.match(/^\d+$/)) {
-        throw notYetImpl();
-      } else {
-        const vramParam = RegExp.$1;
-
-        if (include(lvarNames, vramParam)) {
-          const lvarRef = toLvarRef(lvarNames, vramParam);
-          puts(`  get_vram ${lvarRef} reg_a`);
-        } else {
-          throw notYetImpl();
-        }
-
-        return "reg_a";
-      }
-
-    } else {
-      throw notYetImpl();
-    }
-
-  } else {
-    // throw invalidType(rest[1]);
-    throw invalidType(rest);
-  }
-}
-
 function codegenSet(
   fnArgNames: string[],
   lvarNames: string[],
@@ -456,7 +403,8 @@ function codegenSet(
 ) {
   let dest = rest.getAsString(0);
 
-  const srcVal = codegenSet_srcVal(fnArgNames, lvarNames, rest);
+  codegenExpr(fnArgNames, lvarNames, rest.get()[1]);
+  const srcVal = "reg_a";
 
   if (matchVram(dest) !== "") {
     const vramParam = matchVram(dest);
