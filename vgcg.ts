@@ -342,7 +342,9 @@ function codegenExpr(
   lvarNames: string[],
   expr: NodeElem
 ) {
-  if (expr instanceof NodeList) {
+  if (typeof expr === "number") {
+    puts(`  cp ${expr} reg_a`);
+  } else if (expr instanceof NodeList) {
     _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
   } else {
     throw notYetImpl(expr);
