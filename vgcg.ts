@@ -233,29 +233,26 @@ function _codegenExpr_push(
   lvarNames: string[],
   expr: NodeElem
 ) {
-  let pushArg;
-
   if (typeof expr === "number") {
-    pushArg = String(expr);
+    puts(`  cp ${expr} reg_a`);
 
   } else if (typeof expr === "string") {
     if (include(fnArgNames, expr)) {
-      pushArg = toFnArgRef(fnArgNames, expr);
+      const cpSrc = toFnArgRef(fnArgNames, expr);
+      puts(`  cp ${cpSrc} reg_a`);
     } else if (include(lvarNames, expr)) {
-      pushArg = toLvarRef(lvarNames, expr);
+      const cpSrc = toLvarRef(lvarNames, expr);
+      puts(`  cp ${cpSrc} reg_a`);
     } else {
       throw notYetImpl(expr);
     }
 
   } else if (expr instanceof NodeList) {
     _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
-    pushArg = "reg_a";
 
   } else {
     throw notYetImpl(expr);
   }
-
-  puts(`  push ${pushArg}`);
 }
 
 function _codegenExpr_add() {
@@ -323,7 +320,9 @@ function _codegenExpr_binary(
   const args = expr.slice(1);
 
   _codegenExpr_push(fnArgNames, lvarNames, args[0]);
+  puts(`  push reg_a`);
   _codegenExpr_push(fnArgNames, lvarNames, args[1]);
+  puts(`  push reg_a`);
 
   if (operator === "+") {
     _codegenExpr_add();
