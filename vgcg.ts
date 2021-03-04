@@ -228,33 +228,6 @@ function codegenWhile(
   puts("");
 }
 
-function _codegenExpr_push(
-  fnArgNames: string[],
-  lvarNames: string[],
-  expr: NodeElem
-) {
-  if (typeof expr === "number") {
-    puts(`  cp ${expr} reg_a`);
-
-  } else if (typeof expr === "string") {
-    if (include(fnArgNames, expr)) {
-      const cpSrc = toFnArgRef(fnArgNames, expr);
-      puts(`  cp ${cpSrc} reg_a`);
-    } else if (include(lvarNames, expr)) {
-      const cpSrc = toLvarRef(lvarNames, expr);
-      puts(`  cp ${cpSrc} reg_a`);
-    } else {
-      throw notYetImpl(expr);
-    }
-
-  } else if (expr instanceof NodeList) {
-    _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
-
-  } else {
-    throw notYetImpl(expr);
-  }
-}
-
 function _codegenExpr_add() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
@@ -319,9 +292,9 @@ function _codegenExpr_binary(
   const operator = expr[0];
   const args = expr.slice(1);
 
-  _codegenExpr_push(fnArgNames, lvarNames, args[0]);
+  codegenExpr(fnArgNames, lvarNames, args[0]);
   puts(`  push reg_a`);
-  _codegenExpr_push(fnArgNames, lvarNames, args[1]);
+  codegenExpr(fnArgNames, lvarNames, args[1]);
   puts(`  push reg_a`);
 
   if (operator === "+") {
