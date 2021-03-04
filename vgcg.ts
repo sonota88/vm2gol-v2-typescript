@@ -337,6 +337,18 @@ function _codegenExpr_binary(
   }
 }
 
+function codegenExpr(
+  fnArgNames: string[],
+  lvarNames: string[],
+  expr: NodeElem
+) {
+  if (expr instanceof NodeList) {
+    _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
+  } else {
+    throw notYetImpl(expr);
+  }
+}
+
 function _codegenCall_pushFnArg(
   fnArgNames: string[],
   lvarNames: string[],
