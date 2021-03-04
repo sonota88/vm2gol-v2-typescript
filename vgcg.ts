@@ -336,32 +336,6 @@ function codegenExpr(
   }
 }
 
-function _codegenCall_pushFnArg(
-  fnArgNames: string[],
-  lvarNames: string[],
-  fnArg: NodeElem
-) {
-  let pushArg: number | string;
-
-  if (typeof fnArg === "number") {
-    pushArg = fnArg;
-  } else if (typeof fnArg === "string") {
-    if (include(fnArgNames, fnArg)) {
-      const fnArgAddr = toFnArgRef(fnArgNames, fnArg);
-      pushArg = fnArgAddr;
-    } else if (include(lvarNames, fnArg)) {
-      const lvarAddr = toLvarRef(lvarNames, fnArg);
-      pushArg = lvarAddr;
-    } else {
-      throw notYetImpl("fnArg", fnArg);
-    }
-  } else {
-    throw notYetImpl("fnArg", fnArg);
-  }
-
-  puts(`  cp ${pushArg} reg_a`);
-}
-
 function codegenCall(
   fnArgNames: string[],
   lvarNames: string[],
@@ -371,7 +345,7 @@ function codegenCall(
   const fnArgs = stmtRest.get().slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
-    _codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+    codegenExpr(fnArgNames, lvarNames, fnArg);
     puts(`  push reg_a`);
   });
 
@@ -393,7 +367,7 @@ function codegenCallSet(
 
   for (let i=fnArgs.length - 1; i>=0; i--) {
     const fnArg = fnArgs[i];
-    _codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+    codegenExpr(fnArgNames, lvarNames, fnArg);
     puts(`  push reg_a`);
   }
 
