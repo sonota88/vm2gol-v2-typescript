@@ -162,7 +162,7 @@ function codegenCase(
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
     if (condHead === "eq") {
-      codegenExpr(fnArgNames, lvarNames, cond.get());
+      _codegenExpr_binary(fnArgNames, lvarNames, cond.get());
 
       puts(`  set_reg_b 1`);
 
@@ -208,7 +208,7 @@ function codegenWhile(
   // ループの先頭
   puts(`label ${labelBegin}`);
 
-  codegenExpr(fnArgNames, lvarNames, condExpr.get());
+  _codegenExpr_binary(fnArgNames, lvarNames, condExpr.get());
   puts(`  set_reg_b 1`);
   puts(`  compare`);
 
@@ -248,7 +248,7 @@ function _codegenExpr_push(
     }
 
   } else if (expr instanceof NodeList) {
-    codegenExpr(fnArgNames, lvarNames, expr.get());
+    _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
     pushArg = "reg_a";
 
   } else {
@@ -314,7 +314,7 @@ function _codegenExpr_neq() {
   puts(`label ${labelEnd}`);
 }
 
-function codegenExpr(
+function _codegenExpr_binary(
   fnArgNames: string[],
   lvarNames: string[],
   expr: NodeElem[]
@@ -418,7 +418,7 @@ function codegenSet_srcVal(
 
   } else if (rest[1] instanceof NodeList) {
     const expr = NodeList.fromEls(rest).getAsNodeList(1);
-    codegenExpr(fnArgNames, lvarNames, expr.els);
+    _codegenExpr_binary(fnArgNames, lvarNames, expr.els);
 
     return "reg_a";
 
