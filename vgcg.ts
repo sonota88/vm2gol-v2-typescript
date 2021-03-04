@@ -359,7 +359,7 @@ function _codegenCall_pushFnArg(
     throw notYetImpl("fnArg", fnArg);
   }
 
-  puts(`  push ${pushArg}`);
+  puts(`  cp ${pushArg} reg_a`);
 }
 
 function codegenCall(
@@ -372,6 +372,7 @@ function codegenCall(
 
   fnArgs.reverse().forEach((fnArg)=>{
     _codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+    puts(`  push reg_a`);
   });
 
   codegenVmComment(`call  ${fnName}`);
@@ -393,6 +394,7 @@ function codegenCallSet(
   for (let i=fnArgs.length - 1; i>=0; i--) {
     const fnArg = fnArgs[i];
     _codegenCall_pushFnArg(fnArgNames, lvarNames, fnArg);
+    puts(`  push reg_a`);
   }
 
   codegenVmComment(`call_set  ${fnName}`);
