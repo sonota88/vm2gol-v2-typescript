@@ -162,7 +162,7 @@ function codegenCase(
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
     if (condHead === "eq") {
-      _codegenExpr_binary(fnArgNames, lvarNames, cond.get());
+      codegenExpr(fnArgNames, lvarNames, cond);
 
       puts(`  set_reg_b 1`);
 
@@ -208,7 +208,7 @@ function codegenWhile(
   // ループの先頭
   puts(`label ${labelBegin}`);
 
-  _codegenExpr_binary(fnArgNames, lvarNames, condExpr.get());
+  codegenExpr(fnArgNames, lvarNames, condExpr);
   puts(`  set_reg_b 1`);
   puts(`  compare`);
 
