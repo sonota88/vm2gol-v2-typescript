@@ -430,36 +430,7 @@ function codegenReturn(
   stmtRest: NodeList
 ) {
   const retval = stmtRest.get()[0];
-
-  if (typeof retval === "number") {
-    throw notYetImpl(retval);
-  } else if (typeof retval === "string") {
-
-    if (matchVram(retval) !== "") {
-      const vramParam = matchVram(retval);
-
-      if (vramParam.match(/^\d+$/)) {
-        throw notYetImpl(retval);
-      } else {
-        if (include(lvarNames, vramParam)) {
-          const lvarRef = toLvarRef(lvarNames, vramParam);
-          puts(`  get_vram ${lvarRef} reg_a`);
-        } else {
-          throw notYetImpl(retval);
-        }
-      }
-
-    } else if (include(lvarNames, retval)) {
-      const lvarRef = toLvarRef(lvarNames, retval);
-      puts(`  cp ${lvarRef} reg_a`);
-      
-    } else {
-      throw notYetImpl(retval);
-    }
-
-  } else {
-    throw notYetImpl(retval);
-  }
+  codegenExpr(fnArgNames, lvarNames, retval);
 }
 
 function codegenVmComment(comment: string) {
