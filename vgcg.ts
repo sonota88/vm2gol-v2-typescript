@@ -24,7 +24,7 @@ function include<T>(xs: T[], x: T): boolean {
 
 function inspect(xs: NodeList): string {
   let s = ""
-  xs.get().forEach((x, i) => {
+  xs.forEach((x, i) => {
     if (1 <= i) {
       s += ", ";
     }
@@ -145,7 +145,7 @@ function codegenCase(
   const labelWhenHead = `when_${labelId}`;
   const labelEndWhenHead = `end_when_${labelId}`;
 
-  for (let whenBlock of whenBlocks.get()) {
+  whenBlocks.forEach((whenBlock)=>{
     whenIndex++;
 
     if (whenBlock instanceof NodeList) {
@@ -175,7 +175,7 @@ function codegenCase(
 
     // 偽の場合ここにジャンプ
     puts(`label ${labelEndWhenHead}_${whenIndex}`);
-  }
+  });
 
   puts(`label ${labelEnd}`);
 }
@@ -452,7 +452,7 @@ function codegenStmts(
   lvarNames: string[],
   stmts: NodeList
 ) {
-  for (let stmt of stmts.get()) {
+  stmts.forEach((stmt)=>{
     if (stmt instanceof NodeList) {
       ;
     } else {
@@ -460,7 +460,7 @@ function codegenStmts(
     }
 
     codegenStmt(fnArgNames, lvarNames, stmt);
-  }
+  });
 }
 
 function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
@@ -501,9 +501,7 @@ function codegenFunc(rest: NodeList) {
 
   const lvarNames: string[] = [];
 
-  const stmts: NodeElem[] = body.get();
-
-  for (let stmt of stmts) {
+  body.forEach((stmt)=>{
     if (stmt instanceof NodeList) {
       ;
     } else {
@@ -523,7 +521,7 @@ function codegenFunc(rest: NodeList) {
     } else {
       codegenStmt(fnArgNames, lvarNames, stmt);
     }
-  }
+  });
 
   puts(``);
   puts(`  cp bp sp`);
@@ -536,7 +534,7 @@ function codegenTopStmts(
   lvarNames: string[],
   rest: NodeList
 ) {
-  for (let stmt of rest.get()) {
+  rest.forEach((stmt)=>{
     let stmtHead: string;
     let stmtRest: NodeList;
 
@@ -563,7 +561,7 @@ function codegenTopStmts(
     } else {
       throw notYetImpl("stmtHead", stmtHead);
     }
-  }
+  });
 }
 
 function codegen(topStmts: NodeList) {
