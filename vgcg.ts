@@ -185,7 +185,6 @@ function codegenWhile(
   rest: List
 ) {
   const condExpr = rest.getAsNodeList(0);
-
   const body = rest.getAsNodeList(1);
 
   globalLabelId++;
@@ -281,7 +280,7 @@ function _codegenExpr_binary(
   lvarNames: string[],
   expr: List
 ) {
-  const operator = expr.get(0);
+  const operator = expr.getAsString(0);
   const args = expr.slice(1);
 
   codegenExpr(fnArgNames, lvarNames, args.get(0));
@@ -423,7 +422,7 @@ function codegenStmt(
   lvarNames: string[],
   stmt: List
 ) {
-  const stmtHead = stmt.hd();
+  const stmtHead = stmt.getAsString(0);
   const stmtRest = stmt.tl();
 
   if (stmtHead === "call") {
