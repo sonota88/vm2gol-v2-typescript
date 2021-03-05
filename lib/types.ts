@@ -3,28 +3,28 @@ import {
   notYetImpl
 } from "./utils.ts"
 
-type NodeElem = string | number | List;
+type Node = string | number | List;
 
 export class List {
-  els: NodeElem[];
+  els: Node[];
 
   constructor() {
     this.els = [];
   }
 
-  push(el: NodeElem) {
+  push(el: Node) {
     this.els.push(el);
   }
 
-  pushAll(els: NodeElem[]) {
+  pushAll(els: Node[]) {
     this.els.push(... els);
   }
 
-  get(i: number): NodeElem {
+  get(i: number): Node {
     return this.els[i];
   }
 
-  forEach(fn: (elem: NodeElem, i: number)=> void) {
+  forEach(fn: (elem: Node, i: number)=> void) {
     this.els.forEach(fn);
   }
 
@@ -50,11 +50,11 @@ export class List {
     return this.els.length;
   }
 
-  hd(): NodeElem {
+  hd(): Node {
     return this.els[0];
   }
 
-  tl(): NodeElem[] {
+  tl(): Node[] {
     return this.els.slice(1);
   }
 
@@ -82,7 +82,7 @@ export class List {
     });
   }
 
-  static fromEls(els: NodeElem[]): List {
+  static fromEls(els: Node[]): List {
     const nl = new List();
     nl.els = els;
     return nl;

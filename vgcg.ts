@@ -39,7 +39,7 @@ function inspect(xs: List): string {
 
 // --------------------------------
 
-type NodeElem = string | number | List;
+type Node = string | number | List;
 
 type PlainElem = string | number | PlainArray;
 type PlainArray = PlainElem[];
@@ -306,7 +306,7 @@ function _codegenExpr_binary(
 function codegenExpr(
   fnArgNames: string[],
   lvarNames: string[],
-  expr: NodeElem
+  expr: Node
 ) {
   if (typeof expr === "number") {
     puts(`  cp ${expr} reg_a`);
@@ -463,12 +463,12 @@ function codegenStmts(
   });
 }
 
-function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
+function codegenFunc_getFnArgNames(nodeElem: Node): string[] {
   let fnArgNames: string[];
 
   if (nodeElem instanceof List) {
     fnArgNames =
-      nodeElem.toPlain().map((el: NodeElem) => {
+      nodeElem.toPlain().map((el: Node) => {
         if (typeof el === "string") {
           return el;
         } else {
@@ -511,7 +511,7 @@ function codegenFunc(rest: List) {
     const stmtHead = stmt.getAsString(0);
 
     if (stmtHead === "var") {
-      const stmtRest: NodeElem[] = stmt.tl();
+      const stmtRest: Node[] = stmt.tl();
 
       const lvarName = List.fromEls(stmtRest).getAsString(0);
       lvarNames.push(lvarName);
