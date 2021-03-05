@@ -534,27 +534,20 @@ function codegenTopStmts(
   rest: List
 ) {
   rest.forEach((stmt)=>{
-    let stmtHead: string;
-    let stmtRest: List;
-
     if (stmt instanceof List) {
-      const hd = stmt.hd();
-      if (typeof hd === "string") {
-        stmtHead = hd;
-      } else {
-        throw invalidType(hd);
-      }
-      stmtRest = stmt.tl();
+      ;
     } else {
       throw invalidType(stmt);
     }
+
+    const stmtHead = stmt.getAsString(0);
+    const stmtRest = stmt.tl();
 
     if (stmtHead === "func") {
       codegenFunc(stmtRest);
 
     } else if (stmtHead === "_cmt") {
       const cmt = stmtRest.getAsString(0);
-
       codegenVmComment(cmt);
 
     } else {
