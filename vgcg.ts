@@ -283,11 +283,11 @@ function _codegenExpr_binary(
   expr: NodeList
 ) {
   const operator = expr.get(0);
-  const args = expr.getEls().slice(1);
+  const args = expr.slice(1);
 
-  codegenExpr(fnArgNames, lvarNames, args[0]);
+  codegenExpr(fnArgNames, lvarNames, args.get(0));
   puts(`  push reg_a`);
-  codegenExpr(fnArgNames, lvarNames, args[1]);
+  codegenExpr(fnArgNames, lvarNames, args.get(1));
   puts(`  push reg_a`);
 
   if (operator === "+") {
@@ -352,7 +352,7 @@ function codegenCall(
   stmtRest: NodeList
 ) {
   const fnName = stmtRest.getAsString(0);
-  const fnArgs = stmtRest.getEls().slice(1);
+  const fnArgs = stmtRest.slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
     codegenExpr(fnArgNames, lvarNames, fnArg);
@@ -361,7 +361,7 @@ function codegenCall(
 
   codegenVmComment(`call  ${fnName}`);
   puts(`  call ${fnName}`);
-  puts(`  add_sp ${fnArgs.length}`);
+  puts(`  add_sp ${fnArgs.size()}`);
 }
 
 function codegenCallSet(
