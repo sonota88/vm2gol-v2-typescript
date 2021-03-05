@@ -158,23 +158,23 @@ function codegenCase(
 
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
-      codegenExpr(fnArgNames, lvarNames, cond);
+    codegenExpr(fnArgNames, lvarNames, cond);
 
-      puts(`  cp 1 reg_b`);
+    puts(`  cp 1 reg_b`);
 
-      puts(`  compare`);
-      puts(`  jump_eq ${labelWhenHead}_${whenIndex}`);
-      puts(`  jump ${labelEndWhenHead}_${whenIndex}`);
+    puts(`  compare`);
+    puts(`  jump_eq ${labelWhenHead}_${whenIndex}`);
+    puts(`  jump ${labelEndWhenHead}_${whenIndex}`);
 
-      // 真の場合ここにジャンプ
-      puts(`label ${labelWhenHead}_${whenIndex}`);
+    // 真の場合ここにジャンプ
+    puts(`label ${labelWhenHead}_${whenIndex}`);
 
-      codegenStmts(fnArgNames, lvarNames, rest);
+    codegenStmts(fnArgNames, lvarNames, rest);
 
-      puts(`  jump ${labelEnd}`);
+    puts(`  jump ${labelEnd}`);
 
-      // 偽の場合ここにジャンプ
-      puts(`label ${labelEndWhenHead}_${whenIndex}`);
+    // 偽の場合ここにジャンプ
+    puts(`label ${labelEndWhenHead}_${whenIndex}`);
   }
 
   puts(`label ${labelEnd}`);
