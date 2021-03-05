@@ -54,8 +54,8 @@ export class List {
     return this.els[0];
   }
 
-  tl(): Node[] {
-    return this.els.slice(1);
+  tl(): List {
+    return List.fromEls(this.els.slice(1));
   }
 
   slice(n: number): List {

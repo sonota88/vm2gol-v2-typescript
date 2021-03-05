@@ -321,7 +321,7 @@ function parseCall(): List {
   const nl = new List();
   nl.push("call");
   nl.push(funcName);
-  nl.pushAll(args);
+  nl.pushAll(args.els);
 
   return nl;
 }

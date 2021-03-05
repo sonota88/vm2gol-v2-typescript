@@ -153,7 +153,7 @@ function codegenCase(
       throw invalidType(whenBlock);
     }
     const cond = whenBlock.getAsNodeList(0);
-    const rest = List.fromEls(whenBlock.tl());
+    const rest = whenBlock.tl();
 
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
@@ -424,7 +424,7 @@ function codegenStmt(
   stmt: List
 ) {
   const stmtHead = stmt.hd();
-  const stmtRest = List.fromEls(stmt.tl());
+  const stmtRest = stmt.tl();
 
   if (stmtHead === "call") {
     codegenCall(fnArgNames, lvarNames, stmtRest);
@@ -510,12 +510,12 @@ function codegenFunc(rest: List) {
     const stmtHead = stmt.getAsString(0);
 
     if (stmtHead === "var") {
-      const stmtRest: Node[] = stmt.tl();
+      const stmtRest = stmt.tl();
 
-      const lvarName = List.fromEls(stmtRest).getAsString(0);
+      const lvarName = stmtRest.getAsString(0);
       lvarNames.push(lvarName);
 
-      codegenVar(fnArgNames, lvarNames, List.fromEls(stmtRest));
+      codegenVar(fnArgNames, lvarNames, stmtRest);
 
     } else {
       codegenStmt(fnArgNames, lvarNames, stmt);
@@ -544,7 +544,7 @@ function codegenTopStmts(
       } else {
         throw invalidType(hd);
       }
-      stmtRest = List.fromEls(stmt.tl());
+      stmtRest = stmt.tl();
     } else {
       throw invalidType(stmt);
     }
@@ -570,7 +570,7 @@ function codegen(topStmts: List) {
   // const head = topStmts.hd();
   const rest = topStmts.tl();
 
-  codegenTopStmts([], [], List.fromEls(rest));
+  codegenTopStmts([], [], rest);
 }
 
 // --------------------------------
