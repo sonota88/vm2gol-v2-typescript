@@ -1,7 +1,7 @@
 import { FileReader } from "./lib/file_reader.ts"
 
 import {
-  NodeList,
+  List,
   Token
 } from "./lib/types.ts"
 

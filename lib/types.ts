@@ -3,9 +3,9 @@ import {
   notYetImpl
 } from "./utils.ts"
 
-type NodeElem = string | number | NodeList;
+type NodeElem = string | number | List;
 
-export class NodeList {
+export class List {
   els: NodeElem[];
 
   constructor() {
@@ -37,9 +37,9 @@ export class NodeList {
     }
   }
 
-  getAsNodeList(i: number): NodeList {
+  getAsNodeList(i: number): List {
     const el = this.els[i];
-    if (el instanceof NodeList) {
+    if (el instanceof List) {
       return el;
     } else {
       throw invalidType(el);
@@ -58,16 +58,16 @@ export class NodeList {
     return this.els.slice(1);
   }
 
-  slice(n: number): NodeList {
-    return NodeList.fromEls(this.els.slice(1));
+  slice(n: number): List {
+    return List.fromEls(this.els.slice(1));
   }
 
-  reverse(): NodeList {
+  reverse(): List {
     const newEls = [];
     for (let i = this.size() - 1; 0 <= i; i--) {
       newEls.push(this.get(i));
     }
-    return NodeList.fromEls(newEls);
+    return List.fromEls(newEls);
   }
 
   toPlain(): any {
@@ -82,8 +82,8 @@ export class NodeList {
     });
   }
 
-  static fromEls(els: NodeElem[]): NodeList {
-    const nl = new NodeList();
+  static fromEls(els: NodeElem[]): List {
+    const nl = new List();
     nl.els = els;
     return nl;
   }

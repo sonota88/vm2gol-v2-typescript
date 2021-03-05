@@ -6,7 +6,7 @@ import {
 } from "./lib/utils.ts"
 
 import {
-  NodeList
+  List
 } from "./lib/types.ts"
 
 function puts(msg: string) {
@@ -22,7 +22,7 @@ function include<T>(xs: T[], x: T): boolean {
   return false;
 }
 
-function inspect(xs: NodeList): string {
+function inspect(xs: List): string {
   let s = ""
   xs.forEach((x, i) => {
     if (1 <= i) {
@@ -39,14 +39,14 @@ function inspect(xs: NodeList): string {
 
 // --------------------------------
 
-type NodeElem = string | number | NodeList;
+type NodeElem = string | number | List;
 
 type PlainElem = string | number | PlainArray;
 type PlainArray = PlainElem[];
 
-const _parse = (json: string): [NodeList, number] => {
+const _parse = (json: string): [List, number] => {
   let pos = 1;
-  const xs = new NodeList();
+  const xs = new List();
 
   while (pos <= json.length - 1) {
     const rest = json.slice(pos);
@@ -79,7 +79,7 @@ const _parse = (json: string): [NodeList, number] => {
   return [xs, pos];
 };
 
-const parse = (json: string): NodeList => {
+const parse = (json: string): List => {
   const jsonWithoutComment = json.split("\n")
         .filter((line: string) => ! /^ *\/\//.test(line))
         .join("\n");
@@ -122,7 +122,7 @@ let globalLabelId = 0;
 function codegenVar(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeList
+  stmtRest: List
 ) {
   puts(`  sub_sp 1`);
 
@@ -134,7 +134,7 @@ function codegenVar(
 function codegenCase(
   fnArgNames: string[],
   lvarNames: string[],
-  whenBlocks: NodeList
+  whenBlocks: List
 ) {
   globalLabelId++;
   const labelId = globalLabelId;
@@ -148,13 +148,13 @@ function codegenCase(
   whenBlocks.forEach((whenBlock)=>{
     whenIndex++;
 
-    if (whenBlock instanceof NodeList) {
+    if (whenBlock instanceof List) {
       // OK
     } else {
       throw invalidType(whenBlock);
     }
     const cond = whenBlock.getAsNodeList(0);
-    const rest = NodeList.fromEls(whenBlock.tl());
+    const rest = List.fromEls(whenBlock.tl());
 
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
@@ -183,7 +183,7 @@ function codegenCase(
 function codegenWhile(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeList
+  rest: List
 ) {
   const condExpr = rest.getAsNodeList(0);
 
@@ -280,7 +280,7 @@ function _codegenExpr_neq() {
 function _codegenExpr_binary(
   fnArgNames: string[],
   lvarNames: string[],
-  expr: NodeList
+  expr: List
 ) {
   const operator = expr.get(0);
   const args = expr.slice(1);
@@ -339,7 +339,7 @@ function codegenExpr(
       throw notYetImpl(expr);
     }
 
-  } else if (expr instanceof NodeList) {
+  } else if (expr instanceof List) {
     _codegenExpr_binary(fnArgNames, lvarNames, expr);
   } else {
     throw notYetImpl(expr);
@@ -349,7 +349,7 @@ function codegenExpr(
 function codegenCall(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeList
+  stmtRest: List
 ) {
   const fnName = stmtRest.getAsString(0);
   const fnArgs = stmtRest.slice(1);
@@ -367,7 +367,7 @@ function codegenCall(
 function codegenCallSet(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeList
+  stmtRest: List
 ) {
   const lvarName = stmtRest.getAsString(0);
   const fnTemp = stmtRest.getAsNodeList(1);
@@ -381,7 +381,7 @@ function codegenCallSet(
 function codegenSet(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeList
+  rest: List
 ) {
   let dest = rest.getAsString(0);
 
@@ -409,7 +409,7 @@ function codegenSet(
 function codegenReturn(
   fnArgNames: string[],
   lvarNames: string[],
-  stmtRest: NodeList
+  stmtRest: List
 ) {
   const retval = stmtRest.get(0);
   codegenExpr(fnArgNames, lvarNames, retval);
@@ -422,10 +422,10 @@ function codegenVmComment(comment: string) {
 function codegenStmt(
   fnArgNames: string[],
   lvarNames: string[],
-  stmt: NodeList
+  stmt: List
 ) {
   const stmtHead = stmt.hd();
-  const stmtRest = NodeList.fromEls(stmt.tl());
+  const stmtRest = List.fromEls(stmt.tl());
 
   if (stmtHead === "call") {
     codegenCall(fnArgNames, lvarNames, stmtRest);
@@ -450,10 +450,10 @@ function codegenStmt(
 function codegenStmts(
   fnArgNames: string[],
   lvarNames: string[],
-  stmts: NodeList
+  stmts: List
 ) {
   stmts.forEach((stmt)=>{
-    if (stmt instanceof NodeList) {
+    if (stmt instanceof List) {
       ;
     } else {
       throw new Error("invalid type");
@@ -466,7 +466,7 @@ function codegenStmts(
 function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
   let fnArgNames: string[];
 
-  if (nodeElem instanceof NodeList) {
+  if (nodeElem instanceof List) {
     fnArgNames =
       nodeElem.toPlain().map((el: NodeElem) => {
         if (typeof el === "string") {
@@ -482,12 +482,12 @@ function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
   return fnArgNames;
 }
 
-function codegenFunc(rest: NodeList) {
+function codegenFunc(rest: List) {
   const fnName = rest.getAsString(0);
 
   const fnArgNames = codegenFunc_getFnArgNames(rest.get(1));
 
-  let body: NodeList;
+  let body: List;
 
   body = rest.getAsNodeList(2);
 
@@ -502,7 +502,7 @@ function codegenFunc(rest: NodeList) {
   const lvarNames: string[] = [];
 
   body.forEach((stmt)=>{
-    if (stmt instanceof NodeList) {
+    if (stmt instanceof List) {
       ;
     } else {
       throw new Error("invalid type");
@@ -513,10 +513,10 @@ function codegenFunc(rest: NodeList) {
     if (stmtHead === "var") {
       const stmtRest: NodeElem[] = stmt.tl();
 
-      const lvarName = NodeList.fromEls(stmtRest).getAsString(0);
+      const lvarName = List.fromEls(stmtRest).getAsString(0);
       lvarNames.push(lvarName);
 
-      codegenVar(fnArgNames, lvarNames, NodeList.fromEls(stmtRest));
+      codegenVar(fnArgNames, lvarNames, List.fromEls(stmtRest));
 
     } else {
       codegenStmt(fnArgNames, lvarNames, stmt);
@@ -532,20 +532,20 @@ function codegenFunc(rest: NodeList) {
 function codegenTopStmts(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeList
+  rest: List
 ) {
   rest.forEach((stmt)=>{
     let stmtHead: string;
-    let stmtRest: NodeList;
+    let stmtRest: List;
 
-    if (stmt instanceof NodeList) {
+    if (stmt instanceof List) {
       const hd = stmt.hd();
       if (typeof hd === "string") {
         stmtHead = hd;
       } else {
         throw invalidType(hd);
       }
-      stmtRest = NodeList.fromEls(stmt.tl());
+      stmtRest = List.fromEls(stmt.tl());
     } else {
       throw invalidType(stmt);
     }
@@ -564,14 +564,14 @@ function codegenTopStmts(
   });
 }
 
-function codegen(topStmts: NodeList) {
+function codegen(topStmts: List) {
   puts("  call main");
   puts("  exit");
 
   // const head = topStmts.hd();
   const rest = topStmts.tl();
 
-  codegenTopStmts([], [], NodeList.fromEls(rest));
+  codegenTopStmts([], [], List.fromEls(rest));
 }
 
 // --------------------------------
