@@ -156,12 +156,8 @@ function codegenCase(
     const cond = whenBlock.getAsNodeList(0);
     const rest = NodeList.fromEls(whenBlock.tl());
 
-    const condHead = cond.hd();
-    // const condRest = cond.tl();
-
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
-    if (condHead === "eq") {
       codegenExpr(fnArgNames, lvarNames, cond);
 
       puts(`  set_reg_b 1`);
@@ -179,9 +175,6 @@ function codegenCase(
 
       // 偽の場合ここにジャンプ
       puts(`label ${labelEndWhenHead}_${whenIndex}`);
-    } else {
-      throw notYetImpl();
-    }
   }
 
   puts(`label ${labelEnd}`);
