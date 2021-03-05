@@ -62,6 +62,18 @@ export class NodeList {
     return this.els.slice(1);
   }
 
+  slice(n: number): NodeList {
+    return NodeList.fromEls(this.els.slice(1));
+  }
+
+  reverse(): NodeList {
+    const newEls = [];
+    for (let i = this.size() - 1; 0 <= i; i--) {
+      newEls.push(this.get(i));
+    }
+    return NodeList.fromEls(newEls);
+  }
+
   toPlain(): any {
     return this.els.map(el => {
       if (typeof el === "string" ||
