@@ -280,10 +280,10 @@ function _codegenExpr_neq() {
 function _codegenExpr_binary(
   fnArgNames: string[],
   lvarNames: string[],
-  expr: NodeElem[]
+  expr: NodeList
 ) {
-  const operator = expr[0];
-  const args = expr.slice(1);
+  const operator = expr.get(0);
+  const args = expr.getEls().slice(1);
 
   codegenExpr(fnArgNames, lvarNames, args[0]);
   puts(`  push reg_a`);
@@ -340,7 +340,7 @@ function codegenExpr(
     }
 
   } else if (expr instanceof NodeList) {
-    _codegenExpr_binary(fnArgNames, lvarNames, expr.getEls());
+    _codegenExpr_binary(fnArgNames, lvarNames, expr);
   } else {
     throw notYetImpl(expr);
   }
