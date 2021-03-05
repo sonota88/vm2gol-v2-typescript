@@ -483,12 +483,8 @@ function codegenFunc_getFnArgNames(nodeElem: Node): string[] {
 
 function codegenFunc(rest: List) {
   const fnName = rest.getAsString(0);
-
   const fnArgNames = codegenFunc_getFnArgNames(rest.get(1));
-
-  let body: List;
-
-  body = rest.getAsNodeList(2);
+  const body = rest.getAsNodeList(2);
 
   puts(``);
   puts(`label ${fnName}`);
