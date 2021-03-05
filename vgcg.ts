@@ -372,18 +372,7 @@ function codegenCallSet(
   const lvarName = stmtRest.getAsString(0);
   const fnTemp = stmtRest.getAsNodeList(1);
 
-  const fnName = fnTemp.hd();
-  const fnArgs = fnTemp.tl();
-
-  for (let i=fnArgs.length - 1; i>=0; i--) {
-    const fnArg = fnArgs[i];
-    codegenExpr(fnArgNames, lvarNames, fnArg);
-    puts(`  push reg_a`);
-  }
-
-  codegenVmComment(`call_set  ${fnName}`);
-  puts(`  call ${fnName}`);
-  puts(`  add_sp ${fnArgs.length}`);
+  codegenCall(fnArgNames, lvarNames, fnTemp);
 
   const lvarRef = toLvarRef(lvarNames, lvarName);
   puts(`  cp reg_a ${lvarRef}`);
