@@ -160,7 +160,7 @@ function codegenCase(
 
       codegenExpr(fnArgNames, lvarNames, cond);
 
-      puts(`  set_reg_b 1`);
+      puts(`  cp 1 reg_b`);
 
       puts(`  compare`);
       puts(`  jump_eq ${labelWhenHead}_${whenIndex}`);
@@ -202,7 +202,7 @@ function codegenWhile(
   puts(`label ${labelBegin}`);
 
   codegenExpr(fnArgNames, lvarNames, condExpr);
-  puts(`  set_reg_b 1`);
+  puts(`  cp 1 reg_b`);
   puts(`  compare`);
 
   // true の場合ループの本体を実行
@@ -246,11 +246,11 @@ function _codegenExpr_eq() {
   puts(`  compare`);
   puts(`  jump_eq ${labelThen}`);
 
-  puts(`  set_reg_a 0`);
+  puts(`  cp 0 reg_a`);
   puts(`  jump ${labelEnd}`);
 
   puts(`label ${labelThen}`);
-  puts(`  set_reg_a 1`);
+  puts(`  cp 1 reg_a`);
 
   puts(`label ${labelEnd}`);
 }
@@ -268,11 +268,11 @@ function _codegenExpr_neq() {
   puts(`  compare`);
   puts(`  jump_eq ${labelThen}`);
 
-  puts(`  set_reg_a 1`);
+  puts(`  cp 1 reg_a`);
   puts(`  jump ${labelEnd}`);
 
   puts(`label ${labelThen}`);
-  puts(`  set_reg_a 0`);
+  puts(`  cp 0 reg_a`);
 
   puts(`label ${labelEnd}`);
 }
