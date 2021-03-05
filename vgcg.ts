@@ -451,7 +451,7 @@ function codegenStmts(
     if (stmt instanceof List) {
       ;
     } else {
-      throw new Error("invalid type");
+      throw invalidType(stmt);
     }
 
     codegenStmt(fnArgNames, lvarNames, stmt);
@@ -496,7 +496,7 @@ function codegenFunc(rest: List) {
     if (stmt instanceof List) {
       ;
     } else {
-      throw new Error("invalid type");
+      throw invalidType(stmt);
     }
 
     const stmtHead = stmt.getAsString(0);
