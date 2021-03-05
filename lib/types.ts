@@ -20,10 +20,6 @@ export class NodeList {
     this.els.push(... els);
   }
 
-  getEls() {
-    return this.els;
-  }
-
   get(i: number): NodeElem {
     return this.els[i];
   }
