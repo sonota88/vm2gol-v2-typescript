@@ -510,12 +510,7 @@ function codegenFunc(rest: NodeList) {
       throw new Error("invalid type");
     }
 
-    const stmtHead = stmt.hd();
-    if (typeof stmtHead === "string") {
-      ;
-    } else {
-      throw invalidType(stmt.hd());
-    }
+    const stmtHead = stmt.getAsString(0);
 
     if (stmtHead === "var") {
       const stmtRest: NodeElem[] = stmt.tl();
