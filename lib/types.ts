@@ -24,6 +24,10 @@ export class NodeList {
     return this.els;
   }
 
+  get(i: number): NodeElem {
+    return this.els[i];
+  }
+
   forEach(fn: (elem: NodeElem, i: number)=> void) {
     this.els.forEach(fn);
   }
