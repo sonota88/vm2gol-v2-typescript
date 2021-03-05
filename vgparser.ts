@@ -147,12 +147,10 @@ function parseFunc(): List {
   consume("}");
 
   const nl = new List();
-  nl.pushAll([
-    "func",
-    funcName,
-    args,
-    stmts
-  ]);
+  nl.push("func");
+  nl.push(funcName);
+  nl.push(args);
+  nl.push(stmts);
 
   return nl;
 }
@@ -321,7 +319,7 @@ function parseCall(): List {
   const nl = new List();
   nl.push("call");
   nl.push(funcName);
-  nl.pushAll(args.els);
+  nl.pushAll(args);
 
   return nl;
 }
@@ -338,7 +336,7 @@ function parseFuncall(): List {
 
   const nl = new List();
   nl.push(funcName);
-  nl.pushAll(args.els);
+  nl.pushAll(args);
 
   return nl;
 }
@@ -399,7 +397,7 @@ function _parseWhenClause(): List {
 
   const nl = new List();
   nl.push(expr);
-  nl.pushAll(stmts.els);
+  nl.pushAll(stmts);
 
   return nl;
 }
@@ -524,7 +522,7 @@ function parse(): List {
 
   const nl = new List();
   nl.push("top_stmts");
-  nl.pushAll(stmts.els);
+  nl.pushAll(stmts);
 
   return nl;
 }

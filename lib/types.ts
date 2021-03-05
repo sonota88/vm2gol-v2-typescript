@@ -16,8 +16,8 @@ export class List {
     this.els.push(el);
   }
 
-  pushAll(els: Node[]) {
-    this.els.push(... els);
+  pushAll(list: List) {
+    this.els.push(... list.els);
   }
 
   get(i: number): Node {
