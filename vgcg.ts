@@ -340,7 +340,7 @@ function codegenExpr(
     }
 
   } else if (expr instanceof NodeList) {
-    _codegenExpr_binary(fnArgNames, lvarNames, expr.get());
+    _codegenExpr_binary(fnArgNames, lvarNames, expr.getEls());
   } else {
     throw notYetImpl(expr);
   }
@@ -352,7 +352,7 @@ function codegenCall(
   stmtRest: NodeList
 ) {
   const fnName = stmtRest.getAsString(0);
-  const fnArgs = stmtRest.get().slice(1);
+  const fnArgs = stmtRest.getEls().slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
     codegenExpr(fnArgNames, lvarNames, fnArg);
@@ -385,7 +385,7 @@ function codegenSet(
 ) {
   let dest = rest.getAsString(0);
 
-  codegenExpr(fnArgNames, lvarNames, rest.get()[1]);
+  codegenExpr(fnArgNames, lvarNames, rest.getEls()[1]);
   const srcVal = "reg_a";
 
   if (matchVram(dest) !== "") {
@@ -411,7 +411,7 @@ function codegenReturn(
   lvarNames: string[],
   stmtRest: NodeList
 ) {
-  const retval = stmtRest.get()[0];
+  const retval = stmtRest.getEls()[0];
   codegenExpr(fnArgNames, lvarNames, retval);
 }
 
@@ -485,7 +485,7 @@ function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
 function codegenFunc(rest: NodeList) {
   const fnName = rest.getAsString(0);
 
-  const fnArgNames = codegenFunc_getFnArgNames(rest.get()[1]);
+  const fnArgNames = codegenFunc_getFnArgNames(rest.getEls()[1]);
 
   let body: NodeList;
 

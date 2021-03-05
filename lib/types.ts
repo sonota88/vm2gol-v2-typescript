@@ -20,7 +20,7 @@ export class NodeList {
     this.els.push(... els);
   }
 
-  get() {
+  getEls() {
     return this.els;
   }
 
@@ -29,7 +29,7 @@ export class NodeList {
   }
 
   getAsString(i: number): string {
-    const el = this.get()[i];
+    const el = this.getEls()[i];
     if (typeof el === "string") {
       return el;
     } else {
