@@ -385,7 +385,7 @@ function codegenSet(
 ) {
   let dest = rest.getAsString(0);
 
-  codegenExpr(fnArgNames, lvarNames, rest.getEls()[1]);
+  codegenExpr(fnArgNames, lvarNames, rest.get(1));
   const srcVal = "reg_a";
 
   if (matchVram(dest) !== "") {
@@ -411,7 +411,7 @@ function codegenReturn(
   lvarNames: string[],
   stmtRest: NodeList
 ) {
-  const retval = stmtRest.getEls()[0];
+  const retval = stmtRest.get(0);
   codegenExpr(fnArgNames, lvarNames, retval);
 }
 
@@ -485,7 +485,7 @@ function codegenFunc_getFnArgNames(nodeElem: NodeElem): string[] {
 function codegenFunc(rest: NodeList) {
   const fnName = rest.getAsString(0);
 
-  const fnArgNames = codegenFunc_getFnArgNames(rest.getEls()[1]);
+  const fnArgNames = codegenFunc_getFnArgNames(rest.get(1));
 
   let body: NodeList;
 
