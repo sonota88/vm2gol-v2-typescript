@@ -534,9 +534,9 @@ function codegenFunc(rest: NodeList) {
 function codegenTopStmts(
   fnArgNames: string[],
   lvarNames: string[],
-  rest: NodeElem[]
+  rest: NodeList
 ) {
-  for (let stmt of rest) {
+  for (let stmt of rest.get()) {
     let stmtHead: string;
     let stmtRest: NodeList;
 
@@ -570,10 +570,10 @@ function codegen(topStmts: NodeList) {
   puts("  call main");
   puts("  exit");
 
-  const head = topStmts.hd();
+  // const head = topStmts.hd();
   const rest = topStmts.tl();
 
-  codegenTopStmts([], [], rest);
+  codegenTopStmts([], [], NodeList.fromEls(rest));
 }
 
 // --------------------------------
