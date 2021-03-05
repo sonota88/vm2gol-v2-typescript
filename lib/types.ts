@@ -33,7 +33,7 @@ export class NodeList {
   }
 
   getAsString(i: number): string {
-    const el = this.getEls()[i];
+    const el = this.get(i);
     if (typeof el === "string") {
       return el;
     } else {
