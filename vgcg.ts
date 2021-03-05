@@ -40,9 +40,6 @@ function inspect(xs: List): string {
 
 // --------------------------------
 
-type PlainElem = string | number | PlainArray;
-type PlainArray = PlainElem[];
-
 const _parse = (json: string): [List, number] => {
   let pos = 1;
   const xs = new List();
