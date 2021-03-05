@@ -6,7 +6,8 @@ import {
 } from "./lib/utils.ts"
 
 import {
-  List
+  List,
+  Node
 } from "./lib/types.ts"
 
 function puts(msg: string) {
@@ -38,8 +39,6 @@ function inspect(xs: List): string {
 }
 
 // --------------------------------
-
-type Node = string | number | List;
 
 type PlainElem = string | number | PlainArray;
 type PlainArray = PlainElem[];

@@ -3,7 +3,7 @@ import {
   notYetImpl
 } from "./utils.ts"
 
-type Node = string | number | List;
+export type Node = string | number | List;
 
 export class List {
   els: Node[];
