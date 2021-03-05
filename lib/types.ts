@@ -24,6 +24,10 @@ export class NodeList {
     return this.els;
   }
 
+  forEach(fn: (elem: NodeElem, i: number)=> void) {
+    this.els.forEach(fn);
+  }
+
   getAsString(i: number): string {
     const el = this.get()[i];
     if (typeof el === "string") {
