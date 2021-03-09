@@ -26,7 +26,7 @@ run_codegen() {
   local outfile="$1"; shift
 
   NO_COLOR= \
-    deno run --allow-read vgcg.ts $infile > $outfile
+    deno run --allow-read vgcodegen.ts $infile > $outfile
 }
 
 # --------------------------------

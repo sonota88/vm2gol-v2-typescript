@@ -23,4 +23,4 @@ deno run --allow-read \
   vgparser.ts $tokens_file > $tree_file
 
 deno run --allow-read \
-  vgcg.ts $tree_file
+  vgcodegen.ts $tree_file
