@@ -378,9 +378,7 @@ function genCase(
   whenClauses.forEach((whenClause)=>{
     whenIndex++;
 
-    if (whenClause instanceof List) {
-      // OK
-    } else {
+    if (!(whenClause instanceof List)) {
       throw invalidType(whenClause);
     }
     const cond = whenClause.getAsNodeList(0);
@@ -448,9 +446,7 @@ function genStmts(
   stmts: List
 ) {
   stmts.forEach((stmt)=>{
-    if (stmt instanceof List) {
-      ;
-    } else {
+    if (!(stmt instanceof List)) {
       throw invalidType(stmt);
     }
 
@@ -459,20 +455,18 @@ function genStmts(
 }
 
 function genFunc_getFnArgNames(nodeElem: Node): string[] {
-  let fnArgNames: string[];
-
-  if (nodeElem instanceof List) {
-    fnArgNames =
-      nodeElem.toPlain().map((el: Node) => {
-        if (typeof el === "string") {
-          return el;
-        } else {
-          throw invalidType(el);
-        }
-      });
-  } else {
+  if (!(nodeElem instanceof List)) {
     throw invalidType(nodeElem);
   }
+
+  const fnArgNames: string[] =
+      nodeElem.toPlain().map((el: Node) => {
+        if (!(typeof el === "string")) {
+          throw invalidType(el);
+        }
+
+        return el;
+      });
 
   return fnArgNames;
 }
@@ -493,9 +487,7 @@ function genFunc(rest: List) {
   const lvarNames: string[] = [];
 
   body.forEach((stmt)=>{
-    if (stmt instanceof List) {
-      ;
-    } else {
+    if (!(stmt instanceof List)) {
       throw invalidType(stmt);
     }
 
@@ -526,9 +518,7 @@ function genTopStmts(
   rest: List
 ) {
   rest.forEach((stmt)=>{
-    if (stmt instanceof List) {
-      ;
-    } else {
+    if (!(stmt instanceof List)) {
       throw invalidType(stmt);
     }
 
