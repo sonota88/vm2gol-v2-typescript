@@ -126,13 +126,13 @@ function parseFunc(): List {
 
   consume("}");
 
-  const nl = new List();
-  nl.push("func");
-  nl.push(funcName);
-  nl.push(args);
-  nl.push(stmts);
+  const func = new List();
+  func.push("func");
+  func.push(funcName);
+  func.push(args);
+  func.push(stmts);
 
-  return nl;
+  return func;
 }
 
 
@@ -144,11 +144,11 @@ function parseVarDeclare(): List {
 
   consume(";");
 
-  const nl = new List();
-  nl.push("var");
-  nl.push(varName);
+  const stmt = new List();
+  stmt.push("var");
+  stmt.push(varName);
 
-  return nl;
+  return stmt;
 }
 
 function parseVarInit(): List {
@@ -163,12 +163,12 @@ function parseVarInit(): List {
 
   consume(";");
 
-  const nl = new List();
-  nl.push("var");
-  nl.push(varName);
-  nl.push(expr);
+  const stmt = new List();
+  stmt.push("var");
+  stmt.push(varName);
+  stmt.push(expr);
 
-  return nl;
+  return stmt;
 }
 
 function parseVar(): List {
@@ -196,44 +196,44 @@ function parseExprRight(
   }
 
   let exprR: Expr;
-  let nl: List;
+  let expr: List;
 
   switch(t.value) {
   case "+":
     consume("+");
     exprR = parseExpr();
-    nl = new List();
-    nl.push("+");
-    nl.push(exprL);
-    nl.push(exprR);
-    return nl;
+    expr = new List();
+    expr.push("+");
+    expr.push(exprL);
+    expr.push(exprR);
+    return expr;
 
   case "*":
     consume("*");
     exprR = parseExpr();
-    nl = new List();
-    nl.push("*");
-    nl.push(exprL);
-    nl.push(exprR);
-    return nl;
+    expr = new List();
+    expr.push("*");
+    expr.push(exprL);
+    expr.push(exprR);
+    return expr;
 
   case "==":
     consume("==");
     exprR = parseExpr();
-    nl = new List();
-    nl.push("eq");
-    nl.push(exprL);
-    nl.push(exprR);
-    return nl;
+    expr = new List();
+    expr.push("eq");
+    expr.push(exprL);
+    expr.push(exprR);
+    return expr;
 
   case "!=":
     consume("!=");
     exprR = parseExpr();
-    nl = new List();
-    nl.push("neq");
-    nl.push(exprL);
-    nl.push(exprR);
-    return nl;
+    expr = new List();
+    expr.push("neq");
+    expr.push(exprL);
+    expr.push(exprR);
+    return expr;
 
   default:
     throw new Error();
@@ -279,12 +279,12 @@ function parseSet(): List {
 
   consume(";");
 
-  const nl = new List();
-  nl.push("set");
-  nl.push(varName);
-  nl.push(expr);
+  const stmt = new List();
+  stmt.push("set");
+  stmt.push(varName);
+  stmt.push(expr);
 
-  return nl;
+  return stmt;
 }
 
 function parseCall(): List {
@@ -296,12 +296,12 @@ function parseCall(): List {
 
   consume(";");
 
-  const nl = new List();
-  nl.push("call");
-  nl.push(funcName);
-  nl.pushAll(args);
+  const stmt = new List();
+  stmt.push("call");
+  stmt.push(funcName);
+  stmt.pushAll(args);
 
-  return nl;
+  return stmt;
 }
 
 function parseFuncall(): List {
@@ -314,11 +314,11 @@ function parseFuncall(): List {
   const args = parseArgs();
   consume(")");
 
-  const nl = new List();
-  nl.push(funcName);
-  nl.pushAll(args);
+  const funcall = new List();
+  funcall.push(funcName);
+  funcall.pushAll(args);
 
-  return nl;
+  return funcall;
 }
 
 function parseCallSet(): List {
@@ -335,12 +335,12 @@ function parseCallSet(): List {
 
   consume(";");
 
-  const nl = new List();
-  nl.push("call_set");
-  nl.push(varName);
-  nl.push(expr);
+  const stmt = new List();
+  stmt.push("call_set");
+  stmt.push(varName);
+  stmt.push(expr);
 
-  return nl;
+  return stmt;
 }
 
 function parseReturn(): List {
@@ -351,18 +351,18 @@ function parseReturn(): List {
   if (t.value == ";") {
     consume(";");
 
-    const nl = new List();
-    nl.push("return");
-    return nl;
+    const stmt = new List();
+    stmt.push("return");
+    return stmt;
 
   } else {
     const expr = parseExpr();
     consume(";");
 
-    const nl = new List();
-    nl.push("return");
-    nl.push(expr);
-    return nl;
+    const stmt = new List();
+    stmt.push("return");
+    stmt.push(expr);
+    return stmt;
   }
 }
 
@@ -375,11 +375,11 @@ function _parseWhenClause(): List {
   const stmts = parseStmts();
   consume("}");
 
-  const nl = new List();
-  nl.push(expr);
-  nl.pushAll(stmts);
+  const whenClause = new List();
+  whenClause.push(expr);
+  whenClause.pushAll(stmts);
 
-  return nl;
+  return whenClause;
 }
 
 function parseCase(): List {
@@ -400,13 +400,13 @@ function parseCase(): List {
 
   consume("}");
 
-  const nl = new List();
-  nl.push("case");
+  const stmt = new List();
+  stmt.push("case");
   for (let whenClause of whenClauses) {
-    nl.push(whenClause);
+    stmt.push(whenClause);
   }
 
-  return nl;
+  return stmt;
 }
 
 function parseWhile(): List {
@@ -420,12 +420,12 @@ function parseWhile(): List {
   const stmts = parseStmts();
   consume("}");
 
-  const nl = new List();
-  nl.push("while");
-  nl.push(expr);
-  nl.push(stmts);
+  const stmt = new List();
+  stmt.push("while");
+  stmt.push(expr);
+  stmt.push(stmts);
 
-  return nl;
+  return stmt;
 }
 
 function parseVmComment(): List {
@@ -440,11 +440,11 @@ function parseVmComment(): List {
   consume(")");
   consume(";");
 
-  const nl = new List();
-  nl.push("_cmt");
-  nl.push(comment);
+  const stmt = new List();
+  stmt.push("_cmt");
+  stmt.push(comment);
 
-  return nl;
+  return stmt;
 }
 
 function parseStmt(): List {
@@ -500,11 +500,11 @@ function parseTopStmts(): List {
 function parse(): List {
   const stmts = parseTopStmts();
 
-  const nl = new List();
-  nl.push("top_stmts");
-  nl.pushAll(stmts);
+  const tree = new List();
+  tree.push("top_stmts");
+  tree.pushAll(stmts);
 
-  return nl;
+  return tree;
 }
 
 // --------------------------------

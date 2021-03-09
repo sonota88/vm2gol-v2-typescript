@@ -83,9 +83,9 @@ export class List {
   }
 
   static fromEls(els: Node[]): List {
-    const nl = new List();
-    nl.els = els;
-    return nl;
+    const list = new List();
+    list.els = els;
+    return list;
   }
 }
 
