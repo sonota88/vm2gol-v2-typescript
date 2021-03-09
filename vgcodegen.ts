@@ -127,55 +127,6 @@ function genVar(
   }
 }
 
-function genCase(
-  fnArgNames: string[],
-  lvarNames: string[],
-  whenBlocks: List
-) {
-  globalLabelId++;
-  const labelId = globalLabelId;
-
-  let whenIndex = -1;
-
-  const labelEnd = `end_case_${labelId}`;
-  const labelWhenHead = `when_${labelId}`;
-  const labelEndWhenHead = `end_when_${labelId}`;
-
-  whenBlocks.forEach((whenBlock)=>{
-    whenIndex++;
-
-    if (whenBlock instanceof List) {
-      // OK
-    } else {
-      throw invalidType(whenBlock);
-    }
-    const cond = whenBlock.getAsNodeList(0);
-    const rest = whenBlock.tl();
-
-    puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
-
-    genExpr(fnArgNames, lvarNames, cond);
-
-    puts(`  cp 1 reg_b`);
-
-    puts(`  compare`);
-    puts(`  jump_eq ${labelWhenHead}_${whenIndex}`);
-    puts(`  jump ${labelEndWhenHead}_${whenIndex}`);
-
-    // 真の場合ここにジャンプ
-    puts(`label ${labelWhenHead}_${whenIndex}`);
-
-    genStmts(fnArgNames, lvarNames, rest);
-
-    puts(`  jump ${labelEnd}`);
-
-    // 偽の場合ここにジャンプ
-    puts(`label ${labelEndWhenHead}_${whenIndex}`);
-  });
-
-  puts(`label ${labelEnd}`);
-}
-
 function _genExpr_add() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
@@ -410,6 +361,55 @@ function genWhile(
   puts("");
 }
 
+function genCase(
+  fnArgNames: string[],
+  lvarNames: string[],
+  whenBlocks: List
+) {
+  globalLabelId++;
+  const labelId = globalLabelId;
+
+  let whenIndex = -1;
+
+  const labelEnd = `end_case_${labelId}`;
+  const labelWhenHead = `when_${labelId}`;
+  const labelEndWhenHead = `end_when_${labelId}`;
+
+  whenBlocks.forEach((whenBlock)=>{
+    whenIndex++;
+
+    if (whenBlock instanceof List) {
+      // OK
+    } else {
+      throw invalidType(whenBlock);
+    }
+    const cond = whenBlock.getAsNodeList(0);
+    const rest = whenBlock.tl();
+
+    puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
+
+    genExpr(fnArgNames, lvarNames, cond);
+
+    puts(`  cp 1 reg_b`);
+
+    puts(`  compare`);
+    puts(`  jump_eq ${labelWhenHead}_${whenIndex}`);
+    puts(`  jump ${labelEndWhenHead}_${whenIndex}`);
+
+    // 真の場合ここにジャンプ
+    puts(`label ${labelWhenHead}_${whenIndex}`);
+
+    genStmts(fnArgNames, lvarNames, rest);
+
+    puts(`  jump ${labelEnd}`);
+
+    // 偽の場合ここにジャンプ
+    puts(`label ${labelEndWhenHead}_${whenIndex}`);
+  });
+
+  puts(`label ${labelEnd}`);
+}
+
 function genVmComment(comment: string) {
   puts(`  _cmt ` + comment.replace(new RegExp(" ", "g"), "~"));
 }
@@ -430,10 +430,10 @@ function genStmt(
     genSet(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "return") {
     genReturn(fnArgNames, lvarNames, stmtRest);
-  } else if (stmtHead === "case") {
-    genCase(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "while") {
     genWhile(fnArgNames, lvarNames, stmtRest);
+  } else if (stmtHead === "case") {
+    genCase(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "_cmt") {
     const cmt = stmtRest.getAsString(0);
     genVmComment(cmt);
