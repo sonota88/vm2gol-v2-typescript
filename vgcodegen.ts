@@ -115,7 +115,7 @@ function matchVram(str: string): string {
 
 let globalLabelId = 0;
 
-function codegenVar(
+function genVar(
   fnArgNames: string[],
   lvarNames: string[],
   stmtRest: List
@@ -123,11 +123,11 @@ function codegenVar(
   puts(`  sub_sp 1`);
 
   if (stmtRest.size() === 2) {
-    codegenSet(fnArgNames, lvarNames, stmtRest);
+    genSet(fnArgNames, lvarNames, stmtRest);
   }
 }
 
-function codegenCase(
+function genCase(
   fnArgNames: string[],
   lvarNames: string[],
   whenBlocks: List
@@ -154,7 +154,7 @@ function codegenCase(
 
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
-    codegenExpr(fnArgNames, lvarNames, cond);
+    genExpr(fnArgNames, lvarNames, cond);
 
     puts(`  cp 1 reg_b`);
 
@@ -165,7 +165,7 @@ function codegenCase(
     // 真の場合ここにジャンプ
     puts(`label ${labelWhenHead}_${whenIndex}`);
 
-    codegenStmts(fnArgNames, lvarNames, rest);
+    genStmts(fnArgNames, lvarNames, rest);
 
     puts(`  jump ${labelEnd}`);
 
@@ -176,7 +176,7 @@ function codegenCase(
   puts(`label ${labelEnd}`);
 }
 
-function codegenWhile(
+function genWhile(
   fnArgNames: string[],
   lvarNames: string[],
   rest: List
@@ -196,7 +196,7 @@ function codegenWhile(
   // ループの先頭
   puts(`label ${labelBegin}`);
 
-  codegenExpr(fnArgNames, lvarNames, condExpr);
+  genExpr(fnArgNames, lvarNames, condExpr);
   puts(`  cp 1 reg_b`);
   puts(`  compare`);
 
@@ -207,7 +207,7 @@ function codegenWhile(
   puts(`  jump ${labelEnd}`);
 
   puts(`label ${labelTrue}`);
-  codegenStmts(fnArgNames, lvarNames, body);
+  genStmts(fnArgNames, lvarNames, body);
 
   // ループの先頭に戻る
   puts(`  jump ${labelBegin}`);
@@ -216,19 +216,19 @@ function codegenWhile(
   puts("");
 }
 
-function _codegenExpr_add() {
+function _genExpr_add() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
   puts(`  add_ab`);
 }
 
-function _codegenExpr_mult() {
+function _genExpr_mult() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
   puts(`  mult_ab`);
 }
 
-function _codegenExpr_eq() {
+function _genExpr_eq() {
   globalLabelId++;
   const labelId = globalLabelId;
 
@@ -250,7 +250,7 @@ function _codegenExpr_eq() {
   puts(`label ${labelEnd}`);
 }
 
-function _codegenExpr_neq() {
+function _genExpr_neq() {
   globalLabelId++;
   const labelId = globalLabelId;
 
@@ -272,7 +272,7 @@ function _codegenExpr_neq() {
   puts(`label ${labelEnd}`);
 }
 
-function _codegenExpr_binary(
+function _genExpr_binary(
   fnArgNames: string[],
   lvarNames: string[],
   expr: List
@@ -280,25 +280,25 @@ function _codegenExpr_binary(
   const operator = expr.getAsString(0);
   const args = expr.slice(1);
 
-  codegenExpr(fnArgNames, lvarNames, args.get(0));
+  genExpr(fnArgNames, lvarNames, args.get(0));
   puts(`  push reg_a`);
-  codegenExpr(fnArgNames, lvarNames, args.get(1));
+  genExpr(fnArgNames, lvarNames, args.get(1));
   puts(`  push reg_a`);
 
   if (operator === "+") {
-    _codegenExpr_add();
+    _genExpr_add();
   } else if (operator === "*") {
-    _codegenExpr_mult();
+    _genExpr_mult();
   } else if (operator === "eq") {
-    _codegenExpr_eq();
+    _genExpr_eq();
   } else if (operator === "neq") {
-    _codegenExpr_neq();
+    _genExpr_neq();
   } else {
     throw notYetImpl(operator);
   }
 }
 
-function codegenExpr(
+function genExpr(
   fnArgNames: string[],
   lvarNames: string[],
   expr: Node
@@ -335,13 +335,13 @@ function codegenExpr(
     }
 
   } else if (expr instanceof List) {
-    _codegenExpr_binary(fnArgNames, lvarNames, expr);
+    _genExpr_binary(fnArgNames, lvarNames, expr);
   } else {
     throw notYetImpl(expr);
   }
 }
 
-function codegenCall(
+function genCall(
   fnArgNames: string[],
   lvarNames: string[],
   stmtRest: List
@@ -350,16 +350,16 @@ function codegenCall(
   const fnArgs = stmtRest.slice(1);
 
   fnArgs.reverse().forEach((fnArg)=>{
-    codegenExpr(fnArgNames, lvarNames, fnArg);
+    genExpr(fnArgNames, lvarNames, fnArg);
     puts(`  push reg_a`);
   });
 
-  codegenVmComment(`call  ${fnName}`);
+  genVmComment(`call  ${fnName}`);
   puts(`  call ${fnName}`);
   puts(`  add_sp ${fnArgs.size()}`);
 }
 
-function codegenCallSet(
+function genCallSet(
   fnArgNames: string[],
   lvarNames: string[],
   stmtRest: List
@@ -367,20 +367,20 @@ function codegenCallSet(
   const lvarName = stmtRest.getAsString(0);
   const fnTemp = stmtRest.getAsNodeList(1);
 
-  codegenCall(fnArgNames, lvarNames, fnTemp);
+  genCall(fnArgNames, lvarNames, fnTemp);
 
   const lvarRef = toLvarRef(lvarNames, lvarName);
   puts(`  cp reg_a ${lvarRef}`);
 }
 
-function codegenSet(
+function genSet(
   fnArgNames: string[],
   lvarNames: string[],
   rest: List
 ) {
   let dest = rest.getAsString(0);
 
-  codegenExpr(fnArgNames, lvarNames, rest.get(1));
+  genExpr(fnArgNames, lvarNames, rest.get(1));
   const srcVal = "reg_a";
 
   if (matchVram(dest) !== "") {
@@ -401,20 +401,20 @@ function codegenSet(
   }
 }
 
-function codegenReturn(
+function genReturn(
   fnArgNames: string[],
   lvarNames: string[],
   stmtRest: List
 ) {
   const retval = stmtRest.get(0);
-  codegenExpr(fnArgNames, lvarNames, retval);
+  genExpr(fnArgNames, lvarNames, retval);
 }
 
-function codegenVmComment(comment: string) {
+function genVmComment(comment: string) {
   puts(`  _cmt ` + comment.replace(new RegExp(" ", "g"), "~"));
 }
 
-function codegenStmt(
+function genStmt(
   fnArgNames: string[],
   lvarNames: string[],
   stmt: List
@@ -423,26 +423,26 @@ function codegenStmt(
   const stmtRest = stmt.tl();
 
   if (stmtHead === "call") {
-    codegenCall(fnArgNames, lvarNames, stmtRest);
+    genCall(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "call_set") {
-    codegenCallSet(fnArgNames, lvarNames, stmtRest);
+    genCallSet(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "set") {
-    codegenSet(fnArgNames, lvarNames, stmtRest);
+    genSet(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "return") {
-    codegenReturn(fnArgNames, lvarNames, stmtRest);
+    genReturn(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "case") {
-    codegenCase(fnArgNames, lvarNames, stmtRest);
+    genCase(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "while") {
-    codegenWhile(fnArgNames, lvarNames, stmtRest);
+    genWhile(fnArgNames, lvarNames, stmtRest);
   } else if (stmtHead === "_cmt") {
     const cmt = stmtRest.getAsString(0);
-    codegenVmComment(cmt);
+    genVmComment(cmt);
   } else {
     throw notYetImpl("stmtHead", stmtHead);
   }
 }
 
-function codegenStmts(
+function genStmts(
   fnArgNames: string[],
   lvarNames: string[],
   stmts: List
@@ -454,11 +454,11 @@ function codegenStmts(
       throw invalidType(stmt);
     }
 
-    codegenStmt(fnArgNames, lvarNames, stmt);
+    genStmt(fnArgNames, lvarNames, stmt);
   });
 }
 
-function codegenFunc_getFnArgNames(nodeElem: Node): string[] {
+function genFunc_getFnArgNames(nodeElem: Node): string[] {
   let fnArgNames: string[];
 
   if (nodeElem instanceof List) {
@@ -477,9 +477,9 @@ function codegenFunc_getFnArgNames(nodeElem: Node): string[] {
   return fnArgNames;
 }
 
-function codegenFunc(rest: List) {
+function genFunc(rest: List) {
   const fnName = rest.getAsString(0);
-  const fnArgNames = codegenFunc_getFnArgNames(rest.get(1));
+  const fnArgNames = genFunc_getFnArgNames(rest.get(1));
   const body = rest.getAsNodeList(2);
 
   puts(``);
@@ -507,10 +507,10 @@ function codegenFunc(rest: List) {
       const lvarName = stmtRest.getAsString(0);
       lvarNames.push(lvarName);
 
-      codegenVar(fnArgNames, lvarNames, stmtRest);
+      genVar(fnArgNames, lvarNames, stmtRest);
 
     } else {
-      codegenStmt(fnArgNames, lvarNames, stmt);
+      genStmt(fnArgNames, lvarNames, stmt);
     }
   });
 
@@ -520,7 +520,7 @@ function codegenFunc(rest: List) {
   puts(`  ret`);
 }
 
-function codegenTopStmts(
+function genTopStmts(
   fnArgNames: string[],
   lvarNames: string[],
   rest: List
@@ -536,11 +536,11 @@ function codegenTopStmts(
     const stmtRest = stmt.tl();
 
     if (stmtHead === "func") {
-      codegenFunc(stmtRest);
+      genFunc(stmtRest);
 
     } else if (stmtHead === "_cmt") {
       const cmt = stmtRest.getAsString(0);
-      codegenVmComment(cmt);
+      genVmComment(cmt);
 
     } else {
       throw notYetImpl("stmtHead", stmtHead);
@@ -555,7 +555,7 @@ function codegen(topStmts: List) {
   // const head = topStmts.hd();
   const rest = topStmts.tl();
 
-  codegenTopStmts([], [], rest);
+  genTopStmts([], [], rest);
 }
 
 // --------------------------------
