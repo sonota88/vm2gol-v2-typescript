@@ -364,7 +364,7 @@ function genWhile(
 function genCase(
   fnArgNames: string[],
   lvarNames: string[],
-  whenBlocks: List
+  whenClauses: List
 ) {
   globalLabelId++;
   const labelId = globalLabelId;
@@ -375,16 +375,16 @@ function genCase(
   const labelWhenHead = `when_${labelId}`;
   const labelEndWhenHead = `end_when_${labelId}`;
 
-  whenBlocks.forEach((whenBlock)=>{
+  whenClauses.forEach((whenClause)=>{
     whenIndex++;
 
-    if (whenBlock instanceof List) {
+    if (whenClause instanceof List) {
       // OK
     } else {
-      throw invalidType(whenBlock);
+      throw invalidType(whenClause);
     }
-    const cond = whenBlock.getAsNodeList(0);
-    const rest = whenBlock.tl();
+    const cond = whenClause.getAsNodeList(0);
+    const rest = whenClause.tl();
 
     puts(`  # 条件 ${labelId}_${whenIndex}: ${inspect(cond)}`);
 
