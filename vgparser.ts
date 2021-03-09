@@ -498,11 +498,11 @@ function parseTopStmts(): List {
 }
 
 function parse(): List {
-  const stmts = parseTopStmts();
+  const topStmts = parseTopStmts();
 
   const tree = new List();
   tree.push("top_stmts");
-  tree.pushAll(stmts);
+  tree.pushAll(topStmts);
 
   return tree;
 }
