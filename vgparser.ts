@@ -84,15 +84,6 @@ function _parseArg() {
   }
 }
 
-function _parseArgsFirst() {
-  return _parseArg();
-}
-
-function _parseArgsRest() {
-  consume(",");
-  return _parseArg();
-}
-
 function parseArgs(): List {
   const args = new List();
 
@@ -100,10 +91,11 @@ function parseArgs(): List {
     return args;
   }
 
-  args.push(_parseArgsFirst());
+  args.push(_parseArg());
 
   while (peek().value === ",") {
-    args.push(_parseArgsRest());
+    consume(",");
+    args.push(_parseArg());
   }
 
   return args;
