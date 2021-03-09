@@ -1,3 +1,19 @@
+const textEncoder = new TextEncoder();
+
+const print_e = (arg: any) => {
+  Deno.stderr.writeSync(
+    textEncoder.encode(String(arg)),
+  );
+};
+
+export const puts_e = (...args: any[]) => {
+  for (let arg of args) {
+    print_e(String(arg) + "\n");
+  }
+};
+
+// --------------------------------
+
 export function notYetImpl(...args: any[]) {
   const msg = "Not yet implemented" +
     args

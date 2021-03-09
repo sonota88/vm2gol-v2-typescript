@@ -1,24 +1,12 @@
 import { FileReader } from "./lib/file_reader.ts"
 
+import { puts_e } from "./lib/utils.ts"
+
 import {
   List,
   Token,
   TokenValue
 } from "./lib/types.ts"
-
-const textEncoder = new TextEncoder();
-
-const print_e = (arg: any) => {
-  Deno.stderr.writeSync(
-    textEncoder.encode(String(arg)),
-  );
-};
-
-const puts_e = (...args: any[]) => {
-  for (let arg of args) {
-    print_e(String(arg) + "\n");
-  }
-};
 
 // --------------------------------
 

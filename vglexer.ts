@@ -5,23 +5,6 @@ import {
   Token
 } from "./lib/types.ts"
 
-const textEncoder = new TextEncoder();
-
-const print_e = (arg: any) => {
-  Deno.stderr.writeSync(
-    textEncoder.encode(String(arg)),
-  );
-};
-
-const puts_e = (...args: any[]) => {
-  for (let arg of args) {
-    print_e(String(arg) + "\n");
-  }
-};
-
-
-// --------------------------------
-
 function tokenize(src: string) {
   const tokens = [];
   let pos = 0;
