@@ -176,46 +176,6 @@ function genCase(
   puts(`label ${labelEnd}`);
 }
 
-function genWhile(
-  fnArgNames: string[],
-  lvarNames: string[],
-  rest: List
-) {
-  const condExpr = rest.getAsNodeList(0);
-  const body = rest.getAsNodeList(1);
-
-  globalLabelId++;
-  const labelId = globalLabelId;
-
-  const labelBegin = `while_${labelId}`;
-  const labelEnd = `end_while_${labelId}`;
-  const labelTrue = `true_${labelId}`;
-
-  puts("");
-
-  // ループの先頭
-  puts(`label ${labelBegin}`);
-
-  genExpr(fnArgNames, lvarNames, condExpr);
-  puts(`  cp 1 reg_b`);
-  puts(`  compare`);
-
-  // true の場合ループの本体を実行
-  puts(`  jump_eq ${labelTrue}`);
-
-  // false の場合ループを抜ける
-  puts(`  jump ${labelEnd}`);
-
-  puts(`label ${labelTrue}`);
-  genStmts(fnArgNames, lvarNames, body);
-
-  // ループの先頭に戻る
-  puts(`  jump ${labelBegin}`);
-
-  puts(`label ${labelEnd}`);
-  puts("");
-}
-
 function _genExpr_add() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
@@ -408,6 +368,46 @@ function genReturn(
 ) {
   const retval = stmtRest.get(0);
   genExpr(fnArgNames, lvarNames, retval);
+}
+
+function genWhile(
+  fnArgNames: string[],
+  lvarNames: string[],
+  rest: List
+) {
+  const condExpr = rest.getAsNodeList(0);
+  const body = rest.getAsNodeList(1);
+
+  globalLabelId++;
+  const labelId = globalLabelId;
+
+  const labelBegin = `while_${labelId}`;
+  const labelEnd = `end_while_${labelId}`;
+  const labelTrue = `true_${labelId}`;
+
+  puts("");
+
+  // ループの先頭
+  puts(`label ${labelBegin}`);
+
+  genExpr(fnArgNames, lvarNames, condExpr);
+  puts(`  cp 1 reg_b`);
+  puts(`  compare`);
+
+  // true の場合ループの本体を実行
+  puts(`  jump_eq ${labelTrue}`);
+
+  // false の場合ループを抜ける
+  puts(`  jump ${labelEnd}`);
+
+  puts(`label ${labelTrue}`);
+  genStmts(fnArgNames, lvarNames, body);
+
+  // ループの先頭に戻る
+  puts(`  jump ${labelBegin}`);
+
+  puts(`label ${labelEnd}`);
+  puts("");
 }
 
 function genVmComment(comment: string) {
