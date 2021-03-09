@@ -460,13 +460,13 @@ function genFunc_getFnArgNames(nodeElem: Node): string[] {
   }
 
   const fnArgNames: string[] =
-      nodeElem.toPlain().map((el: Node) => {
-        if (!(typeof el === "string")) {
-          throw invalidType(el);
-        }
+    nodeElem.toPlain().map((el: Node) => {
+      if (!(typeof el === "string")) {
+        throw invalidType(el);
+      }
 
-        return el;
-      });
+      return el;
+    });
 
   return fnArgNames;
 }
