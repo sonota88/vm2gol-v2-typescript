@@ -291,15 +291,12 @@ function parseCall(): List {
   consume("call");
 
   const funcall = parseFuncall();
-  const funcName = funcall.getAsString(0);
-  const args     = funcall.tl();
 
   consume(";");
 
   const stmt = new List();
   stmt.push("call");
-  stmt.push(funcName);
-  stmt.pushAll(args);
+  stmt.pushAll(funcall);
 
   return stmt;
 }
@@ -331,14 +328,14 @@ function parseCallSet(): List {
 
   consume("=");
 
-  const expr = parseFuncall();
+  const funcall = parseFuncall();
 
   consume(";");
 
   const stmt = new List();
   stmt.push("call_set");
   stmt.push(varName);
-  stmt.push(expr);
+  stmt.push(funcall);
 
   return stmt;
 }

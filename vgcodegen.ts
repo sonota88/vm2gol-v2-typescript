@@ -263,9 +263,9 @@ function genCallSet(
   stmtRest: List
 ) {
   const lvarName = stmtRest.getAsString(0);
-  const fnTemp = stmtRest.getAsNodeList(1);
+  const funcall = stmtRest.getAsNodeList(1);
 
-  genCall(fnArgNames, lvarNames, fnTemp);
+  genCall(fnArgNames, lvarNames, funcall);
 
   const lvarRef = toLvarRef(lvarNames, lvarName);
   puts(`  cp reg_a ${lvarRef}`);
