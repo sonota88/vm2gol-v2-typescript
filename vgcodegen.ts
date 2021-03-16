@@ -115,14 +115,6 @@ function toLvarRef(
   return `[bp:-${index + 1}]`;
 }
 
-function matchVram(str: string): string {
-  if (str.match(/^vram\[(.+)\]$/)) {
-    return RegExp.$1;
-  } else {
-    return "";
-  }
-}
-
 // --------------------------------
 
 let globalLabelId = 0;
@@ -236,23 +228,6 @@ function genExpr(
     } else if (include(lvarNames, expr)) {
       const cpSrc = toLvarRef(lvarNames, expr);
       puts(`  cp ${cpSrc} reg_a`);
-
-    } else if (matchVram(expr) !== "") {
-      const vramParam = matchVram(expr);
-
-      if (vramParam.match(/^\d+$/)) {
-        throw notYetImpl();
-      } else {
-        const vramParam = RegExp.$1;
-
-        if (include(lvarNames, vramParam)) {
-          const lvarRef = toLvarRef(lvarNames, vramParam);
-          puts(`  get_vram ${lvarRef} reg_a`);
-        } else {
-          throw notYetImpl();
-        }
-      }
-
     } else {
       throw notYetImpl(expr);
     }
@@ -306,22 +281,9 @@ function genSet(
   genExpr(fnArgNames, lvarNames, rest.get(1));
   const srcVal = "reg_a";
 
-  if (matchVram(dest) !== "") {
-    const vramParam = matchVram(dest);
-
-    if (vramParam.match(/^\d+$/)) {
-      throw notYetImpl();
-    } else if (include(lvarNames, vramParam)) {
-      const lvarRef = toLvarRef(lvarNames, vramParam);
-      puts(`  set_vram ${lvarRef} ${srcVal}`);
-    } else {
-      throw notYetImpl();
-    }
-
-  } else if (include(lvarNames, dest)) {
+  if (include(lvarNames, dest)) {
     const lvarAddr = toLvarRef(lvarNames, dest);
     puts(`  cp ${srcVal} ${lvarAddr}`);
-
   } else {
     throw notYetImpl("dest", dest);
   }

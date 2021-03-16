@@ -40,7 +40,7 @@ function tokenize(src: string) {
       tokens.push(new Token("symbol", str));
       pos += str.length;
 
-    } else if (rest.match(/^([a-z_][a-z0-9_\[\]]*)/)) {
+    } else if (rest.match(/^([a-z_][a-z0-9_]*)/)) {
       const str = RegExp.$1;
       tokens.push(new Token("ident", str));
       pos += str.length;
