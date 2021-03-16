@@ -10,3 +10,11 @@ label main
   cp bp sp
   pop bp
   ret
+
+label set_vram
+  push bp
+  cp sp bp
+  set_vram [bp:2] [bp:3]
+  cp bp sp
+  pop bp
+  ret

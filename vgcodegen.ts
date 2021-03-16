@@ -548,6 +548,15 @@ function genTopStmts(
   });
 }
 
+function genBuiltinSetVram() {
+  puts("");
+  puts("label set_vram");
+  asmPrologue();
+  puts("  set_vram [bp:2] [bp:3]"); // vram_addr value
+  asmEpilogue();
+  puts("  ret");
+}
+
 function codegen(topStmts: List) {
   puts("  call main");
   puts("  exit");
@@ -556,6 +565,8 @@ function codegen(topStmts: List) {
   const rest = topStmts.tl();
 
   genTopStmts([], [], rest);
+
+  genBuiltinSetVram();
 }
 
 // --------------------------------
