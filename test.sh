@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -o nounset
-set -o errexit
 
 readonly TMP_DIR=z_tmp
 
