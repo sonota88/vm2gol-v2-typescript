@@ -318,9 +318,12 @@ function genSet(
       throw notYetImpl();
     }
 
-  } else {
+  } else if (include(lvarNames, dest)) {
     const lvarAddr = toLvarRef(lvarNames, dest);
     puts(`  cp ${srcVal} ${lvarAddr}`);
+
+  } else {
+    throw notYetImpl("dest", dest);
   }
 }
 
