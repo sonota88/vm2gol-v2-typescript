@@ -346,9 +346,7 @@ function parseCallSet(): List {
 function parseReturn(): List {
   consume("return");
 
-  const t = peek();
-
-  if (t.value == ";") {
+  if (peek().value == ";") {
     consume(";");
 
     const stmt = new List();
