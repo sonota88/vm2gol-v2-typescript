@@ -557,6 +557,15 @@ function genBuiltinSetVram() {
   puts("  ret");
 }
 
+function genBuiltinGetVram() {
+  puts("");
+  puts("label get_vram");
+  asmPrologue();
+  puts("  get_vram [bp:2] reg_a"); // vram_addr dest
+  asmEpilogue();
+  puts("  ret");
+}
+
 function codegen(topStmts: List) {
   puts("  call main");
   puts("  exit");
@@ -567,6 +576,7 @@ function codegen(topStmts: List) {
   genTopStmts([], [], rest);
 
   genBuiltinSetVram();
+  genBuiltinGetVram();
 }
 
 // --------------------------------

@@ -18,3 +18,11 @@ label set_vram
   cp bp sp
   pop bp
   ret
+
+label get_vram
+  push bp
+  cp sp bp
+  get_vram [bp:2] reg_a
+  cp bp sp
+  pop bp
+  ret
