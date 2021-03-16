@@ -85,6 +85,18 @@ const parse = (json: string): List => {
 
 // --------------------------------
 
+function asmPrologue() {
+  puts("  push bp");
+  puts("  cp sp bp");
+}
+
+function asmEpilogue() {
+  puts("  cp bp sp");
+  puts("  pop bp");
+}
+
+// --------------------------------
+
 function toFnArgRef(
   fnArgNames: string[],
   fnArgName: string
@@ -478,8 +490,7 @@ function genFunc(rest: List) {
 
   puts(``);
   puts(`label ${fnName}`);
-  puts(`  push bp`);
-  puts(`  cp sp bp`);
+  asmPrologue();
 
   puts(``);
   puts(`  # 関数の処理本体`);
@@ -507,8 +518,7 @@ function genFunc(rest: List) {
   });
 
   puts(``);
-  puts(`  cp bp sp`);
-  puts(`  pop bp`);
+  asmEpilogue();
   puts(`  ret`);
 }
 
