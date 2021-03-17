@@ -4,7 +4,4 @@ https://memo88.hatenablog.com/entry/2020/08/15/114754
 ```
 # Run tests
 ./test.sh
-
-# Compile game of life
-./run.sh gol.vg.txt
 ```
