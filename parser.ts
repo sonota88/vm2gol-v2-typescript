@@ -360,6 +360,25 @@ function parseReturn(): List {
   }
 }
 
+function parseWhile(): List {
+  consume("while");
+
+  consume("(");
+  const expr = parseExpr();
+  consume(")");
+
+  consume("{");
+  const stmts = parseStmts();
+  consume("}");
+
+  const stmt = new List();
+  stmt.push("while");
+  stmt.push(expr);
+  stmt.push(stmts);
+
+  return stmt;
+}
+
 function _parseWhenClause(): List {
   consume("(");
   const expr = parseExpr();
@@ -399,25 +418,6 @@ function parseCase(): List {
   for (let whenClause of whenClauses) {
     stmt.push(whenClause);
   }
-
-  return stmt;
-}
-
-function parseWhile(): List {
-  consume("while");
-
-  consume("(");
-  const expr = parseExpr();
-  consume(")");
-
-  consume("{");
-  const stmts = parseStmts();
-  consume("}");
-
-  const stmt = new List();
-  stmt.push("while");
-  stmt.push(expr);
-  stmt.push(stmts);
 
   return stmt;
 }
