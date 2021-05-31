@@ -540,8 +540,10 @@ function codegen(topStmts: List) {
 
   genTopStmts([], [], rest);
 
+  puts("#>builtins");
   genBuiltinSetVram();
   genBuiltinGetVram();
+  puts("#<builtins");
 }
 
 // --------------------------------

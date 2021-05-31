@@ -908,6 +908,7 @@ label end_while_19
   pop bp
   ret
 
+#>builtins
 label set_vram
   push bp
   cp sp bp
@@ -923,3 +924,4 @@ label get_vram
   cp bp sp
   pop bp
   ret
+#<builtins
