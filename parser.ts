@@ -231,25 +231,6 @@ function parseExprRight(): List {
 function parseExpr(): Expr {
   const tLeft = peek();
 
-  /*
-  if (tLeft.value === "(") {
-    consume("(");
-    const exprL = parseExpr();
-    consume(")");
-
-    const tail = parseExprRight();
-    if (tail.size() === 0) {
-      return exprL;
-    }
-
-    const expr = new List();
-    expr.push(tail.get(0));
-    expr.push(exprL);
-    expr.push(tail.get(1));
-    return expr;
-  }
-  */
-
   if (tLeft._type === "int") {
     pos++;
 
