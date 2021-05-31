@@ -106,9 +106,6 @@ case $cmd in
   parse | p*)
     test_parser
     ;;
-  codegen)
-    test_cg
-    ;;
   compile | c*)
     test_compile "$@"
     ;;
