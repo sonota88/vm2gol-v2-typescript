@@ -186,58 +186,46 @@ function parseVar(): List {
 }
 
 
-function parseExprRight(
-  exprL: Expr // TODO
-): Expr {
+function parseExprRight(): List {
   const t = peek();
 
-  if (t.value === ";" || t.value === ")") {
-    return exprL;
-  }
-
   let exprR: Expr;
-  let expr: List;
+  let expr: List = new List();
 
   switch(t.value) {
   case "+":
     consume("+");
     exprR = parseExpr();
-    expr = new List();
     expr.push("+");
-    expr.push(exprL);
     expr.push(exprR);
-    return expr;
+    break;
 
   case "*":
     consume("*");
     exprR = parseExpr();
-    expr = new List();
     expr.push("*");
-    expr.push(exprL);
     expr.push(exprR);
-    return expr;
+    break;
 
   case "==":
     consume("==");
     exprR = parseExpr();
-    expr = new List();
     expr.push("eq");
-    expr.push(exprL);
     expr.push(exprR);
-    return expr;
+    break;
 
   case "!=":
     consume("!=");
     exprR = parseExpr();
-    expr = new List();
     expr.push("neq");
-    expr.push(exprL);
     expr.push(exprR);
-    return expr;
+    break;
 
   default:
-    throw new Error();
+    ;
   }
+
+  return expr;
 }
 
 function parseExpr(): Expr {
@@ -248,19 +236,50 @@ function parseExpr(): Expr {
     const exprL = parseExpr();
     consume(")");
 
-    return parseExprRight(exprL);
+    const tail = parseExprRight();
+    if (tail.size() === 0) {
+      return exprL;
+    }
+
+    const expr = new List();
+    expr.push(tail.get(0));
+    expr.push(exprL);
+    expr.push(tail.get(1));
+    return expr;
   }
 
   if (tLeft._type === "int") {
     pos++;
 
     const exprL = tLeft.getValueAsInt();
-    return parseExprRight(exprL);
+
+    const tail = parseExprRight();
+    if (tail.size() === 0) {
+      return exprL;
+    }
+
+    const expr = new List();
+    expr.push(tail.get(0));
+    expr.push(exprL);
+    expr.push(tail.get(1));
+    return expr;
+
   } else if (tLeft._type === "ident") {
     pos++;
 
     const exprL = tLeft.value;
-    return parseExprRight(exprL);
+
+    const tail = parseExprRight();
+    if (tail.size() === 0) {
+      return exprL;
+    }
+
+    const expr = new List();
+    expr.push(tail.get(0));
+    expr.push(exprL);
+    expr.push(tail.get(1));
+    return expr;
+
   } else {
     throw new Error();
   }
