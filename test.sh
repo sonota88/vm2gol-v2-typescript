@@ -30,28 +30,6 @@ run_codegen() {
 
 # --------------------------------
 
-test_parser(){
-  local tokens_file=${TMP_DIR}/test.tokens.txt
-  local actual=${TMP_DIR}/test.vgt.json
-
-  run_lexer gol.vg.txt $tokens_file
-  local st=$?
-  if [ $st -ne 0 ]; then
-    exit $st
-  fi
-
-  run_parser $tokens_file $actual
-  local st=$?
-  if [ $st -ne 0 ]; then
-    exit $st
-  fi
-
-  diff -u test/gol.vgt.json $actual
-  if [ $? -ne 0 ]; then
-    errs="${errs},parser"
-  fi
-}
-
 test_compile_nn() {
   local nn="$1"; shift
 
@@ -90,9 +68,6 @@ test_all() {
   # echo "==== deno test ===="
   # deno test || errs="${errs},deno_test"
 
-  echo "==== parser ===="
-  test_parser
-
   echo "==== compile ===="
   test_compile
 }
@@ -103,9 +78,6 @@ errs=""
 
 cmd="$1"; shift
 case $cmd in
-  parse | p*)
-    test_parser
-    ;;
   compile | c*)
     test_compile "$@"
     ;;
