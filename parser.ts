@@ -286,20 +286,6 @@ function parseSet(): List {
   return stmt;
 }
 
-function parseCall(): List {
-  consume("call");
-
-  const funcall = parseFuncall();
-
-  consume(";");
-
-  const stmt = new List();
-  stmt.push("call");
-  stmt.pushAll(funcall);
-
-  return stmt;
-}
-
 function parseFuncall(): List {
   const t = peek();
   pos++;
@@ -315,6 +301,20 @@ function parseFuncall(): List {
   funcall.pushAll(args);
 
   return funcall;
+}
+
+function parseCall(): List {
+  consume("call");
+
+  const funcall = parseFuncall();
+
+  consume(";");
+
+  const stmt = new List();
+  stmt.push("call");
+  stmt.pushAll(funcall);
+
+  return stmt;
 }
 
 function parseCallSet(): List {
