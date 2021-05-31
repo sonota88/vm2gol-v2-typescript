@@ -10,14 +10,14 @@ run_lexer() {
   local infile="$1"; shift
   local outfile="$1"; shift
 
-  deno run --allow-read vglexer.ts $infile > $outfile
+  deno run --allow-read lexer.ts $infile > $outfile
 }
 
 run_parser() {
   local infile="$1"; shift
   local outfile="$1"; shift
 
-  deno run --allow-read vgparser.ts $infile > $outfile
+  deno run --allow-read parser.ts $infile > $outfile
 }
 
 run_codegen() {
@@ -25,13 +25,15 @@ run_codegen() {
   local outfile="$1"; shift
 
   NO_COLOR= \
-    deno run --allow-read vgcodegen.ts $infile > $outfile
+    deno run --allow-read codegen.ts $infile > $outfile
 }
 
 # --------------------------------
 
 test_compile_nn() {
   local nn="$1"; shift
+
+  echo "case ${nn}"
 
   local src_file="test/compile/${nn}.vg.txt"
   local temp_tokens_file="${TMP_DIR}/z_test.tokens.txt"
