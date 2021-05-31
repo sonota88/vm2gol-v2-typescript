@@ -97,13 +97,13 @@ function asmEpilogue() {
 
 // --------------------------------
 
-function toFnArgRef(
+function toFnArgDisp(
   fnArgNames: string[],
   fnArgName: string
-): string
+): number
 {
   const index = fnArgNames.indexOf(fnArgName);
-  return `[bp:${index + 2}]`;
+  return index + 2;
 }
 
 function toLvarRef(
@@ -223,8 +223,8 @@ function genExpr(
 
   } else if (typeof expr === "string") {
     if (include(fnArgNames, expr)) {
-      const cpSrc = toFnArgRef(fnArgNames, expr);
-      puts(`  cp ${cpSrc} reg_a`);
+      const disp = toFnArgDisp(fnArgNames, expr);
+      puts(`  cp [bp:${disp}] reg_a`);
     } else if (include(lvarNames, expr)) {
       const cpSrc = toLvarRef(lvarNames, expr);
       puts(`  cp ${cpSrc} reg_a`);
