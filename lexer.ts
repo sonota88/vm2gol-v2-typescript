@@ -25,7 +25,7 @@ function tokenize(src: string) {
       tokens.push(new Token("str", str));
       pos += str.length + 2;
 
-    } else if (rest.match(/^(func)[^a-z_]/)) {
+    } else if (rest.match(/^(func|_debug)[^a-z_]/)) {
       const str = RegExp.$1;
       tokens.push(new Token("kw", str));
       pos += str.length;

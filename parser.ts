@@ -441,6 +441,18 @@ function parseVmComment(): List {
   return stmt;
 }
 
+function parseDebug(): List {
+  consume("_debug");
+  consume("(");
+  consume(")");
+  consume(";");
+
+  const stmt = new List();
+  stmt.push("_debug");
+
+  return stmt;
+}
+
 function parseStmt(): List {
   const t = peek();
 
@@ -452,6 +464,7 @@ function parseStmt(): List {
   case "while": return parseWhile();
   case "case": return parseCase();
   case "_cmt": return parseVmComment();
+  case "_debug": return parseDebug();
   default:
     throw new Error();
   }

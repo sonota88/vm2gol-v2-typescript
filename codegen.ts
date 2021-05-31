@@ -377,6 +377,10 @@ function genVmComment(comment: string) {
   puts(`  _cmt ` + comment.replace(new RegExp(" ", "g"), "~"));
 }
 
+function genDebug() {
+  puts(`  _debug`);
+}
+
 function genStmt(
   fnArgNames: string[],
   lvarNames: string[],
@@ -400,6 +404,8 @@ function genStmt(
   } else if (stmtHead === "_cmt") {
     const cmt = stmtRest.getAsString(0);
     genVmComment(cmt);
+  } else if (stmtHead === "_debug") {
+    genDebug();
   } else {
     throw notYetImpl("stmtHead", stmtHead);
   }
