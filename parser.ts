@@ -232,22 +232,24 @@ function parseExpr(): Expr {
   const tLeft = peek();
   let exprL: Expr;
 
-  if (tLeft._type === "int") {
+  switch (tLeft._type) {
+  case "int":
     pos++;
-
     exprL = tLeft.getValueAsInt();
+    break;
 
-  } else if (tLeft._type === "ident") {
+  case "ident":
     pos++;
-
     exprL = tLeft.value;
+    break;
 
-  } else if (tLeft._type === "symbol") {
+  case "symbol":
     consume("(");
     exprL = parseExpr();
     consume(")");
+    break;
 
-  } else {
+  default:
     throw new Error();
   }
 
