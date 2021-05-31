@@ -59,14 +59,14 @@ test_compile_nn() {
   local temp_tokens_file="${TMP_DIR}/z_test.tokens.txt"
   local temp_vgt_file="${TMP_DIR}/test.vgt.json"
   local temp_vga_file="${TMP_DIR}/test.vga.txt"
-  local exp_vga_file="test/compile/exp_${nn}.vga.txt"
+  local exp_file="test/compile/exp_${nn}.vga.txt"
   local diff_file="${TMP_DIR}/test_compile_${nn}.diff"
 
   run_lexer $src_file $temp_tokens_file
   run_parser $temp_tokens_file $temp_vgt_file
   run_codegen $temp_vgt_file $temp_vga_file
 
-  ruby test/diff.rb asm $exp_vga_file $temp_vga_file > $diff_file
+  ruby test/diff.rb asm $exp_file $temp_vga_file > $diff_file
 
   local num_lines=$(wc -l ${diff_file} | cut -d " " -f 1)
   if [ $num_lines -ne 0 ]; then
