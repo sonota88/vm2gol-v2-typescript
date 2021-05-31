@@ -106,13 +106,13 @@ function toFnArgDisp(
   return index + 2;
 }
 
-function toLvarRef(
+function toLvarDisp(
   lvarNames: string[],
   lvarName: string
-): string
+): number
 {
   const index = lvarNames.indexOf(lvarName);
-  return `[bp:-${index + 1}]`;
+  return -(index + 1);
 }
 
 // --------------------------------
@@ -226,8 +226,8 @@ function genExpr(
       const disp = toFnArgDisp(fnArgNames, expr);
       puts(`  cp [bp:${disp}] reg_a`);
     } else if (include(lvarNames, expr)) {
-      const cpSrc = toLvarRef(lvarNames, expr);
-      puts(`  cp ${cpSrc} reg_a`);
+      const disp = toLvarDisp(lvarNames, expr);
+      puts(`  cp [bp:${disp}] reg_a`);
     } else {
       throw notYetImpl(expr);
     }
@@ -267,8 +267,8 @@ function genCallSet(
 
   genCall(fnArgNames, lvarNames, funcall);
 
-  const lvarRef = toLvarRef(lvarNames, lvarName);
-  puts(`  cp reg_a ${lvarRef}`);
+  const disp = toLvarDisp(lvarNames, lvarName);
+  puts(`  cp reg_a [bp:${disp}]`);
 }
 
 function genSet(
@@ -282,8 +282,8 @@ function genSet(
   const srcVal = "reg_a";
 
   if (include(lvarNames, dest)) {
-    const lvarAddr = toLvarRef(lvarNames, dest);
-    puts(`  cp ${srcVal} ${lvarAddr}`);
+    const disp = toLvarDisp(lvarNames, dest);
+    puts(`  cp ${srcVal} [bp:${disp}]`);
   } else {
     throw notYetImpl("dest", dest);
   }
