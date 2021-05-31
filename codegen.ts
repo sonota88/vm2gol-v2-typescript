@@ -119,18 +119,6 @@ function toLvarDisp(
 
 let globalLabelId = 0;
 
-function genVar(
-  fnArgNames: string[],
-  lvarNames: string[],
-  stmtRest: List
-) {
-  puts(`  sub_sp 1`);
-
-  if (stmtRest.size() === 2) {
-    genSet(fnArgNames, lvarNames, stmtRest);
-  }
-}
-
 function _genExpr_add() {
   puts(`  pop reg_b`);
   puts(`  pop reg_a`);
@@ -429,6 +417,18 @@ function genStmts(
 
     genStmt(fnArgNames, lvarNames, stmt);
   });
+}
+
+function genVar(
+  fnArgNames: string[],
+  lvarNames: string[],
+  stmtRest: List
+) {
+  puts(`  sub_sp 1`);
+
+  if (stmtRest.size() === 2) {
+    genSet(fnArgNames, lvarNames, stmtRest);
+  }
 }
 
 function genFunc_getFnArgNames(nodeElem: Node): string[] {
