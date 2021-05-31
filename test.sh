@@ -58,11 +58,16 @@ test_compile_nn() {
 }
 
 test_compile() {
+  local nn=
+
   if [ $# -ge 1 ]; then
-    test_compile_nn "$1"
+    nn="$(printf "%02d" $1)"
+    test_compile_nn "$nn"
   else
-    test_compile_nn 01
-    test_compile_nn 29
+    for n in 1 29; do
+      nn="$(printf "%02d" $n)"
+      test_compile_nn $nn
+    done
   fi
 }
 
