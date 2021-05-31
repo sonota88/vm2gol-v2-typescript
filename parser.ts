@@ -230,58 +230,37 @@ function parseExprRight(): List {
 
 function parseExpr(): Expr {
   const tLeft = peek();
+  let exprL: Expr;
 
   if (tLeft._type === "int") {
     pos++;
 
-    const exprL = tLeft.getValueAsInt();
-
-    const tail = parseExprRight();
-    if (tail.size() === 0) {
-      return exprL;
-    }
-
-    const expr = new List();
-    expr.push(tail.get(0));
-    expr.push(exprL);
-    expr.push(tail.get(1));
-    return expr;
+    exprL = tLeft.getValueAsInt();
 
   } else if (tLeft._type === "ident") {
     pos++;
 
-    const exprL = tLeft.value;
-
-    const tail = parseExprRight();
-    if (tail.size() === 0) {
-      return exprL;
-    }
-
-    const expr = new List();
-    expr.push(tail.get(0));
-    expr.push(exprL);
-    expr.push(tail.get(1));
-    return expr;
+    exprL = tLeft.value;
 
   } else if (tLeft._type === "symbol") {
     consume("(");
-    const exprL = parseExpr();
+    exprL = parseExpr();
     consume(")");
-
-    const tail = parseExprRight();
-    if (tail.size() === 0) {
-      return exprL;
-    }
-
-    const expr = new List();
-    expr.push(tail.get(0));
-    expr.push(exprL);
-    expr.push(tail.get(1));
-    return expr;
 
   } else {
     throw new Error();
   }
+
+  const tail = parseExprRight();
+  if (tail.size() === 0) {
+    return exprL;
+  }
+
+  const expr = new List();
+  expr.push(tail.get(0));
+  expr.push(exprL);
+  expr.push(tail.get(1));
+  return expr;
 }
 
 function parseSet(): List {
