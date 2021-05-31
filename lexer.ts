@@ -5,6 +5,21 @@ import {
   Token
 } from "./lib/types.ts"
 
+function isKw(str: string): boolean {
+  return [
+    "func",
+    "set",
+    "var",
+    "call_set",
+    "call",
+    "return",
+    "case",
+    "while",
+    "_cmt",
+    "_debug"
+  ].includes(str);
+}
+
 function tokenize(src: string) {
   const tokens = [];
   let pos = 0;
@@ -25,11 +40,6 @@ function tokenize(src: string) {
       tokens.push(new Token("str", str));
       pos += str.length + 2;
 
-    } else if (rest.match(/^(func|_debug)[^a-z_]/)) {
-      const str = RegExp.$1;
-      tokens.push(new Token("kw", str));
-      pos += str.length;
-
     } else if (rest.match(/^(-?[0-9]+)/)) {
       const str = RegExp.$1;
       tokens.push(new Token("int", str));
@@ -42,7 +52,11 @@ function tokenize(src: string) {
 
     } else if (rest.match(/^([a-z_][a-z0-9_]*)/)) {
       const str = RegExp.$1;
-      tokens.push(new Token("ident", str));
+      if (isKw(str)) {
+        tokens.push(new Token("kw", str));
+      } else {
+        tokens.push(new Token("ident", str));
+      }
       pos += str.length;
 
     } else {
