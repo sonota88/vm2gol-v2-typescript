@@ -64,7 +64,7 @@ test_compile() {
     nn="$(printf "%02d" $1)"
     test_compile_nn "$nn"
   else
-    for n in 1 29; do
+    for n in 1 11 29; do
       nn="$(printf "%02d" $n)"
       test_compile_nn $nn
     done
